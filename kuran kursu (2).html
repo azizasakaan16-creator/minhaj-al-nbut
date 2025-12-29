@@ -1,0 +1,4612 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منهاج النبوة - نظام إدارة الحلقات القرآنية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #0a3d2c;
+            --primary-green: #1a5c45;
+            --accent-gold: #d4af37;
+            --light-gold: #f5e8c8;
+            --light-bg: #f8f9fa;
+            --text-dark: #333;
+            --text-light: #666;
+            --border-color: #e0e0e0;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --purple: #6f42c1;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            direction: rtl;
+            min-height: 100vh;
+            font-size: 15px;
+            -webkit-tap-highlight-color: transparent;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 4px;
+            }
+            
+            .header h2 {
+                font-size: 18px !important;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 8px !important;
+            }
+            
+            .table-header h3 {
+                font-size: 16px !important;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                width: 100%;
+                gap: 8px;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+                padding: 10px !important;
+                font-size: 13px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px 6px !important;
+            }
+            
+            .stat-card {
+                padding: 15px !important;
+            }
+            
+            .stat-card .number {
+                font-size: 24px !important;
+            }
+            
+            .modal-content {
+                width: 95% !important;
+                margin: 5px !important;
+                max-height: 90vh !important;
+            }
+            
+            .modal-body {
+                padding: 15px !important;
+            }
+            
+            .error-message {
+                font-size: 11px !important;
+            }
+            
+            .search-box {
+                width: 100% !important;
+                min-width: unset !important;
+                font-size: 13px;
+                padding: 8px 10px;
+            }
+            
+            .mobile-filters {
+                display: block !important;
+            }
+            
+            .desktop-filters {
+                display: none !important;
+            }
+            
+            .tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+            
+            .tab-btn {
+                padding: 8px 12px;
+                font-size: 13px;
+                white-space: nowrap;
+            }
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .menu-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            .menu-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                z-index: 1000;
+                width: 260px;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-right: 0 !important;
+                padding: 15px !important;
+                padding-bottom: 70px !important;
+            }
+            
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+            }
+            
+            .overlay.active {
+                display: block;
+            }
+        }
+
+        .sidebar {
+            width: 260px;
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            z-index: 999;
+        }
+
+        .logo {
+            padding: 20px 15px;
+            background-color: rgba(0, 0, 0, 0.2);
+            text-align: center;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        .logo h1 {
+            font-size: 22px;
+            color: var(--accent-gold);
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            font-size: 13px;
+            color: var(--light-gold);
+            opacity: 0.8;
+        }
+
+        .sidebar-menu {
+            padding: 15px 0;
+        }
+
+        .menu-section {
+            padding: 0 15px 8px;
+            font-size: 12px;
+            color: var(--light-gold);
+            opacity: 0.7;
+            margin-top: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item {
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+            border-right: 4px solid transparent;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-right-color: var(--accent-gold);
+        }
+
+        .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-right-color: var(--accent-gold);
+        }
+
+        .menu-item i {
+            margin-left: 12px;
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-item .badge {
+            background-color: var(--accent-gold);
+            color: var(--primary-dark);
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-right: auto;
+            font-weight: bold;
+            min-width: 22px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-right: 260px;
+            padding: 20px;
+            background-color: var(--light-bg);
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .header h2 {
+            color: var(--primary-dark);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header h2 i {
+            color: var(--accent-gold);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 6px 10px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            min-width: 160px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            background-color: transparent;
+            border: 1px solid var(--primary-green);
+            color: var(--primary-green);
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logout-btn:hover {
+            background-color: var(--primary-green);
+            color: white;
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border-top: 4px solid;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .stat-card.test { border-top-color: var(--warning); }
+        .stat-card.waiting { border-top-color: var(--danger); }
+        .stat-card.vacation { border-top-color: var(--info); }
+        .stat-card.circles { border-top-color: var(--accent-gold); }
+        .stat-card.students { border-top-color: var(--success); }
+        .stat-card.teachers { border-top-color: var(--purple); }
+
+        .stat-card h3 {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-card h3 i {
+            font-size: 14px;
+        }
+
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+        }
+
+        .stat-card .subtext {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .evaluation-card {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            margin: 2px;
+            text-align: center;
+            min-width: 60px;
+            white-space: nowrap;
+        }
+
+        .evaluation-gold {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+            border: 1px solid #FFA500;
+        }
+
+        .evaluation-silver {
+            background: linear-gradient(135deg, #C0C0C0 0%, #808080 100%);
+            color: #000;
+            border: 1px solid #808080;
+        }
+
+        .evaluation-bronze {
+            background: linear-gradient(135deg, #CD7F32 0%, #8B4513 100%);
+            color: #fff;
+            border: 1px solid #8B4513;
+        }
+
+        .evaluation-excellent {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: #fff;
+            border: 1px solid #2E7D32;
+        }
+
+        .evaluation-outstanding {
+            background: linear-gradient(135deg, #2196F3 0%, #0D47A1 100%);
+            color: #fff;
+            border: 1px solid #0D47A1;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: none;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+            transform: translateY(-2px);
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 11px;
+        }
+
+        .table-container {
+            background-color: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .table-header {
+            padding: 15px;
+            background-color: var(--primary-dark);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            position: sticky;
+            left: 0;
+        }
+
+        .table-header h3 {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            padding: 12px;
+            text-align: right;
+            font-weight: 600;
+            color: var(--primary-dark);
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-dark);
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .status {
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 500;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .status.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status.active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status.inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status.in-progress {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status.completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status.upcoming {
+            background-color: #e2f0ff;
+            color: #004085;
+        }
+
+        .status.urgent {
+            background-color: #f8d7da;
+            color: #721c24;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+
+        .action-btn {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .action-btn.edit {
+            background-color: #e2f0ff;
+            color: #004085;
+        }
+
+        .action-btn.edit:hover {
+            background-color: #c2dfff;
+        }
+
+        .action-btn.delete {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-btn.delete:hover {
+            background-color: #f1b0b7;
+        }
+
+        .action-btn.move {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .action-btn.move:hover {
+            background-color: #b1d5dd;
+        }
+
+        .action-btn.view {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .action-btn.view:hover {
+            background-color: #b8d9c5;
+        }
+
+        .action-btn.test {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .action-btn.test:hover {
+            background-color: #ffeaa7;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1100;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 550px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 15px;
+            background-color: var(--primary-dark);
+            color: white;
+            border-radius: var(--radius) var(--radius) 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .modal-header h3 {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--text-dark);
+            font-size: 13px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent-gold);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 15px;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 50px;
+            color: var(--border-color);
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .teacher-with-students {
+            background: white;
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--purple);
+        }
+
+        .teacher-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .teacher-info h4 {
+            color: var(--primary-dark);
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .teacher-info p {
+            color: var(--text-light);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            margin: 2px;
+            white-space: nowrap;
+        }
+
+        .level-1 { background: #e3f2fd; color: #1565c0; }
+        .level-2 { background: #e8f5e9; color: #2e7d32; }
+        .level-3 { background: #fff3e0; color: #ef6c00; }
+        .level-4 { background: #f3e5f5; color: #7b1fa2; }
+        .level-5 { background: #e8eaf6; color: #283593; }
+        .level-6 { background: #fff8e1; color: #ff8f00; }
+
+        .search-box {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 13px;
+            min-width: 180px;
+        }
+
+        @media (max-width: 768px) {
+            .search-box {
+                width: 100%;
+                min-width: unset;
+            }
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-light);
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-dark);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-green);
+            border-bottom-color: var(--primary-green);
+            background: rgba(26, 92, 69, 0.05);
+        }
+
+        .test-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            border-right: 4px solid var(--warning);
+        }
+
+        .test-card.urgent {
+            border-right-color: var(--danger);
+            animation: pulseBorder 2s infinite;
+        }
+
+        @keyframes pulseBorder {
+            0% { border-right-color: var(--danger); }
+            50% { border-right-color: #ff9999; }
+            100% { border-right-color: var(--danger); }
+        }
+
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .test-info h4 {
+            color: var(--primary-dark);
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .test-info p {
+            color: var(--text-light);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .days-left {
+            font-weight: bold;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 15px;
+            background: var(--light-bg);
+        }
+
+        .days-left.urgent {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .mobile-filters {
+            display: none;
+            background: white;
+            padding: 12px;
+            border-radius: var(--radius);
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-filters {
+                display: block;
+            }
+            
+            .desktop-filters {
+                display: none;
+            }
+        }
+
+        .floating-action-btn {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(26, 92, 69, 0.3);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .floating-action-btn {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .table-container {
+                margin: 0 -10px;
+                width: calc(100% + 20px);
+                border-radius: 0;
+            }
+            
+            th, td {
+                font-size: 11px !important;
+                padding: 6px 4px !important;
+                min-width: 70px;
+            }
+            
+            .action-btn {
+                padding: 3px 6px !important;
+                font-size: 10px !important;
+            }
+            
+            .modal-content {
+                margin: 5px !important;
+                max-height: 85vh !important;
+            }
+            
+            .stat-card {
+                padding: 12px !important;
+            }
+            
+            .stat-card .number {
+                font-size: 22px !important;
+            }
+        }
+        
+        .quick-assign-select {
+            background: #e8f4f8;
+            border: 1px solid #17a2b8;
+            border-radius: 4px;
+            padding: 3px 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quick-assign-select:hover {
+            background: #d1ecf1;
+        }
+        
+        .quick-assign-select:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+        
+        .study-duration {
+            background: #e8f4f8;
+            border-radius: 6px;
+            padding: 8px;
+            margin-top: 8px;
+            border-right: 3px solid var(--info);
+        }
+
+        .duration-bar {
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .duration-progress {
+            height: 100%;
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .alert {
+            padding: 10px 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-info {
+            background-color: #e8f4f8;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 11px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .has-error input,
+        .has-error select,
+        .has-error textarea {
+            border-color: var(--danger) !important;
+        }
+
+        .has-error .error-message {
+            display: block;
+        }
+
+        .emergency-assign-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+        }
+
+        .emergency-assign-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(238, 90, 82, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="appContainer" class="app-container">
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <button class="floating-action-btn" id="floatingActionBtn">
+            <i class="fas fa-plus"></i>
+        </button>
+        
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1>منهاج النبوة</h1>
+                <p>نظام إدارة حلقات تعليم وتحفيظ القرآن الكريم</p>
+                <p style="font-size: 12px; color: var(--accent-gold); margin-top: 8px;">نسخة المدير</p>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-section">لوحة التحكم</div>
+                <a class="menu-item active" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>اللوحة الرئيسية</span>
+                    <span class="badge" id="menuDashboardBadge">0</span>
+                </a>
+                
+                <div class="menu-section">إدارة الطالبات</div>
+                <a class="menu-item" data-page="waiting">
+                    <i class="fas fa-user-clock"></i>
+                    <span>بانتظار التوزيع</span>
+                    <span class="badge" id="menuWaitingBadge">0</span>
+                </a>
+                <a class="menu-item" data-page="tests">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>الاختبارات القادمة</span>
+                    <span class="badge" id="menuTestsBadge">0</span>
+                </a>
+                <a class="menu-item" data-page="allStudents">
+                    <i class="fas fa-users"></i>
+                    <span>جميع الطالبات</span>
+                    <span class="badge" id="menuStudentsBadge">0</span>
+                </a>
+                
+                <div class="menu-section">إدارة المعلمات</div>
+                <a class="menu-item" data-page="teachers">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>المعلمات والحلقات</span>
+                    <span class="badge" id="menuTeachersBadge">0</span>
+                </a>
+                
+                <div class="menu-section">التقارير</div>
+                <a class="menu-item" data-page="reports">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>التقارير الشاملة</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="overlay" id="sidebarOverlay"></div>
+        
+        <div class="main-content">
+            <div id="dashboardPage" class="page">
+                <div class="header">
+                    <h2><i class="fas fa-tachometer-alt"></i> اللوحة الرئيسية</h2>
+                    <div class="header-actions">
+                        <div class="user-info">
+                            <div class="user-avatar" id="userAvatar">م</div>
+                            <div>
+                                <div style="font-weight: 500; font-size: 13px;" id="userNameDisplay">المدير</div>
+                                <div style="font-size: 11px; color: var(--text-light);">آخر تحديث: <span id="lastUpdate">الآن</span></div>
+                            </div>
+                        </div>
+                        <button class="btn btn-info" id="copyAllDataBtn">
+                            <i class="fas fa-copy"></i> نسخ جميع المعلومات
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="quickAlerts"></div>
+                
+                <div class="dashboard-cards" id="dashboardStats">
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3><i class="fas fa-clipboard-check"></i> الاختبارات القادمة</h3>
+                        <button class="btn btn-primary" id="addTestBtn">
+                            <i class="fas fa-plus"></i> إضافة اختبار
+                        </button>
+                    </div>
+                    <div id="upcomingTestsList">
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3><i class="fas fa-user-plus"></i> آخر الطالبات المسجلات</h3>
+                        <button class="btn btn-primary" id="addStudentBtn">
+                            <i class="fas fa-plus"></i> إضافة طالبة
+                        </button>
+                        <button class="btn btn-warning" id="quickAssignBtn" style="display: none;">
+                            <i class="fas fa-bolt"></i> توزيع سريع
+                        </button>
+                    </div>
+                    <div>
+                        <table id="newStudentsTable">
+                            <thead>
+                                <tr>
+                                    <th>الاسم</th>
+                                    <th>المستوى</th>
+                                    <th>المدة المتبقية</th>
+                                    <th>الحلقة</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="newStudentsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="waitingPage" class="page" style="display: none;">
+                <div class="header">
+                    <h2><i class="fas fa-user-clock"></i> طالبات بانتظار التوزيع</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="addWaitingStudentBtn">
+                            <i class="fas fa-plus"></i> إضافة طالبة
+                        </button>
+                        <button class="btn btn-warning" id="autoAssignAllBtn">
+                            <i class="fas fa-robot"></i> توزيع تلقائي
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="dashboard-cards" style="margin-bottom: 25px;">
+                    <div class="stat-card waiting">
+                        <h3><i class="fas fa-user-clock"></i> الطالبات المنتظرات</h3>
+                        <div class="number" id="waitingCount">0</div>
+                        <div class="subtext">طالبة بانتظار التوزيع على الحلقات</div>
+                    </div>
+                    
+                    <div class="stat-card students">
+                        <h3><i class="fas fa-user-graduate"></i> إجمالي الطالبات</h3>
+                        <div class="number" id="totalStudentsCount">0</div>
+                        <div class="subtext">طالبة في جميع الحلقات</div>
+                    </div>
+                    
+                    <div class="stat-card circles">
+                        <h3><i class="fas fa-circle"></i> الحلقات النشطة</h3>
+                        <div class="number" id="activeCirclesCount">0</div>
+                        <div class="subtext">حلقة نشطة لاستقبال الطالبات</div>
+                    </div>
+                </div>
+                
+                <div class="mobile-filters">
+                    <input type="text" id="searchWaitingMobile" class="search-box" placeholder="بحث عن طالبة...">
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3><i class="fas fa-list"></i> قائمة الطالبات بانتظار التوزيع</h3>
+                        <div class="desktop-filters">
+                            <input type="text" id="searchWaiting" class="search-box" placeholder="بحث عن طالبة...">
+                        </div>
+                    </div>
+                    <div>
+                        <table id="waitingStudentsTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>الاسم</th>
+                                    <th>رقم التواصل</th>
+                                    <th>المستوى</th>
+                                    <th>المدة المتبقية</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="waitingStudentsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="testsPage" class="page" style="display: none;">
+                <div class="header">
+                    <h2><i class="fas fa-clipboard-check"></i> الاختبارات القادمة</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="addNewTestBtn">
+                            <i class="fas fa-plus"></i> إضافة اختبار
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="dashboard-cards" style="margin-bottom: 25px;">
+                    <div class="stat-card test">
+                        <h3><i class="fas fa-clipboard-check"></i> الاختبارات القادمة</h3>
+                        <div class="number" id="upcomingTestsCount">0</div>
+                        <div class="subtext">اختبار خلال الأسبوعين القادمين</div>
+                    </div>
+                    
+                    <div class="stat-card warning">
+                        <h3><i class="fas fa-exclamation-triangle"></i> اختبارات عاجلة</h3>
+                        <div class="number" id="urgentTestsCount">0</div>
+                        <div class="subtext">اختبار خلال الأيام الثلاثة القادمة</div>
+                    </div>
+                    
+                    <div class="stat-card students">
+                        <h3><i class="fas fa-user-graduate"></i> طالبات بانتظار اختبار</h3>
+                        <div class="number" id="studentsToTestCount">0</div>
+                        <div class="subtext">طالبة تحتاج اختبار</div>
+                    </div>
+                </div>
+                
+                <div class="tabs" id="testsTabs">
+                    <button class="tab-btn active" data-tab="upcoming">القادمة</button>
+                    <button class="tab-btn" data-tab="completed">المكتملة</button>
+                    <button class="tab-btn" data-tab="all">جميع الاختبارات</button>
+                </div>
+                
+                <div class="mobile-filters">
+                    <select id="filterTestStatusMobile" class="search-box">
+                        <option value="">جميع الحالات</option>
+                        <option value="قادم">قادمة</option>
+                        <option value="مكتمل">مكتملة</option>
+                        <option value="ملغى">ملغاة</option>
+                    </select>
+                </div>
+                
+                <div id="testsContent">
+                </div>
+            </div>
+            
+            <div id="teachersPage" class="page" style="display: none;">
+                <div class="header">
+                    <h2><i class="fas fa-chalkboard-teacher"></i> المعلمات والحلقات</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="addTeacherBtn">
+                            <i class="fas fa-plus"></i> إضافة معلمة
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="dashboard-cards" style="margin-bottom: 25px;">
+                    <div class="stat-card teachers">
+                        <h3><i class="fas fa-chalkboard-teacher"></i> عدد المعلمات</h3>
+                        <div class="number" id="teachersCount">0</div>
+                        <div class="subtext">معلمة نشطة في النظام</div>
+                    </div>
+                    
+                    <div class="stat-card circles">
+                        <h3><i class="fas fa-circle"></i> الحلقات النشطة</h3>
+                        <div class="number" id="circlesCount">0</div>
+                        <div class="subtext">حلقة تعليمية نشطة</div>
+                    </div>
+                    
+                    <div class="stat-card students">
+                        <h3><i class="fas fa-user-graduate"></i> طالبات في الحلقات</h3>
+                        <div class="number" id="circleStudentsCount">0</div>
+                        <div class="subtext">طالبة موزعة على الحلقات</div>
+                    </div>
+                </div>
+                
+                <div id="teachersListContainer">
+                </div>
+            </div>
+            
+            <div id="allStudentsPage" class="page" style="display: none;">
+                <div class="header">
+                    <h2><i class="fas fa-users"></i> جميع الطالبات</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="addNewStudentBtn">
+                            <i class="fas fa-plus"></i> إضافة طالبة
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="dashboard-cards" style="margin-bottom: 25px;">
+                    <div class="stat-card students">
+                        <h3><i class="fas fa-user-graduate"></i> إجمالي الطالبات</h3>
+                        <div class="number" id="allStudentsCount">0</div>
+                        <div class="subtext">طالبة مسجلة في النظام</div>
+                    </div>
+                    
+                    <div class="stat-card circles">
+                        <h3><i class="fas fa-circle"></i> طالبات في الحلقات</h3>
+                        <div class="number" id="inCirclesCount">0</div>
+                        <div class="subtext">طالبة موزعة على الحلقات</div>
+                    </div>
+                    
+                    <div class="stat-card waiting">
+                        <h3><i class="fas fa-user-clock"></i> بانتظار التوزيع</h3>
+                        <div class="number" id="waitingAllCount">0</div>
+                        <div class="subtext">طالبة تحتاج توزيع</div>
+                    </div>
+                </div>
+                
+                <div class="mobile-filters">
+                    <input type="text" id="searchAllStudentsMobile" class="search-box" placeholder="بحث بالاسم أو الرقم...">
+                    <select id="filterLevelMobile" class="search-box" style="margin-top: 8px;">
+                        <option value="">جميع المستويات</option>
+                        <option value="1">المستوى الأول - نور البيان</option>
+                        <option value="2">المستوى الثاني - الأجزاء 6-10</option>
+                        <option value="3">المستوى الثالث - الأجزاء 11-15</option>
+                        <option value="4">المستوى الرابع - الأجزاء 16-20</option>
+                        <option value="5">المستوى الخامس - الأجزاء 21-25</option>
+                        <option value="6">المستوى السادس - الأجزاء 26-30 + الجزرية</option>
+                    </select>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3><i class="fas fa-list"></i> سجل الطالبات</h3>
+                        <div class="desktop-filters" style="display: flex; gap: 8px;">
+                            <input type="text" id="searchAllStudents" class="search-box" placeholder="بحث بالاسم أو الرقم...">
+                            <select id="filterLevel" class="search-box">
+                                <option value="">جميع المستويات</option>
+                                <option value="1">المستوى الأول - نور البيان</option>
+                                <option value="2">المستوى الثاني - الأجزاء 6-10</option>
+                                <option value="3">المستوى الثالث - الأجزاء 11-15</option>
+                                <option value="4">المستوى الرابع - الأجزاء 16-20</option>
+                                <option value="5">المستوى الخامس - الأجزاء 21-25</option>
+                                <option value="6">المستوى السادس - الأجزاء 26-30 + الجزرية</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <table id="allStudentsTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>الاسم</th>
+                                    <th>رقم التواصل</th>
+                                    <th>المستوى</th>
+                                    <th>المدة المتبقية</th>
+                                    <th>الحلقة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allStudentsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="reportsPage" class="page" style="display: none;">
+                <div class="header">
+                    <h2><i class="fas fa-chart-bar"></i> التقارير والإحصائيات</h2>
+                </div>
+                
+                <div id="reportsContent">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- النماذج -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-graduate"></i> <span id="studentModalTitle">إضافة طالبة جديدة</span></h3>
+                <button class="close-modal" id="closeStudentModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="studentForm">
+                    <input type="hidden" id="studentId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentName">اسم الطالبة *</label>
+                            <input type="text" id="studentName" required placeholder="الاسم الثلاثي">
+                            <div class="error-message" id="studentNameError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentPhone">رقم التواصل *</label>
+                            <input type="text" id="studentPhone" required placeholder="أدخل رقم الهاتف">
+                            <div class="error-message" id="studentPhoneError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentLevel">المستوى التعليمي *</label>
+                            <select id="studentLevel" required>
+                                <option value="">اختر المستوى</option>
+                                <option value="1">المستوى الأول - نور البيان</option>
+                                <option value="2">المستوى الثاني - الأجزاء 6-10</option>
+                                <option value="3">المستوى الثالث - الأجزاء 11-15</option>
+                                <option value="4">المستوى الرابع - الأجزاء 16-20</option>
+                                <option value="5">المستوى الخامس - الأجزاء 21-25</option>
+                                <option value="6">المستوى السادس - الأجزاء 26-30 + الجزرية</option>
+                            </select>
+                            <div class="error-message" id="studentLevelError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentStartDate">تاريخ بداية المستوى *</label>
+                            <input type="date" id="studentStartDate" required>
+                            <div class="error-message" id="studentStartDateError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentAge">العمر</label>
+                            <input type="number" id="studentAge" placeholder="العمر" min="5" max="50">
+                            <div class="error-message" id="studentAgeError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentType">نوع التسجيل *</label>
+                            <select id="studentType" required>
+                                <option value="waiting">بانتظار التوزيع</option>
+                                <option value="circle">مباشرة في حلقة</option>
+                            </select>
+                            <div class="error-message" id="studentTypeError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" id="circleSelectionGroup" style="display: none;">
+                        <label for="studentCircle">الحلقة *</label>
+                        <select id="studentCircle">
+                            <option value="">اختر الحلقة</option>
+                        </select>
+                        <div class="error-message" id="studentCircleError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="studentNotes">ملاحظات إضافية</label>
+                        <textarea id="studentNotes" placeholder="أي معلومات إضافية عن الطالبة" rows="2" maxlength="500"></textarea>
+                        <div class="error-message" id="studentNotesError"></div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> حفظ
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('studentModal')">
+                            <i class="fas fa-times"></i> إلغاء
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="teacherModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-chalkboard-teacher"></i> <span id="teacherModalTitle">إضافة معلمة جديدة</span></h3>
+                <button class="close-modal" id="closeTeacherModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="teacherForm">
+                    <input type="hidden" id="teacherId">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="teacherName">اسم المعلمة *</label>
+                            <input type="text" id="teacherName" required placeholder="الاسم الكامل">
+                            <div class="error-message" id="teacherNameError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="teacherPhone">رقم التواصل *</label>
+                            <input type="text" id="teacherPhone" required placeholder="أدخل رقم الهاتف">
+                            <div class="error-message" id="teacherPhoneError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="teacherSpecialty">التخصص *</label>
+                            <select id="teacherSpecialty" required>
+                                <option value="">اختر التخصص</option>
+                                <option value="تجويد">تجويد</option>
+                                <option value="حفظ">حفظ</option>
+                                <option value="مراجعة">مراجعة</option>
+                                <option value="نور البيان">نور البيان</option>
+                                <option value="متعدد">متعدد التخصصات</option>
+                            </select>
+                            <div class="error-message" id="teacherSpecialtyError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="teacherCircleName">اسم الحلقة *</label>
+                            <input type="text" id="teacherCircleName" required placeholder="مثال: حلقة الفجر">
+                            <div class="error-message" id="teacherCircleNameError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="teacherExperience">سنوات الخبرة</label>
+                            <input type="number" id="teacherExperience" placeholder="عدد سنوات الخبرة" min="0" max="50">
+                            <div class="error-message" id="teacherExperienceError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="teacherCapacity">الطاقة الاستيعابية</label>
+                            <input type="number" id="teacherCapacity" placeholder="عدد الطالبات" value="10" min="1" max="50">
+                            <div class="error-message" id="teacherCapacityError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="teacherNotes">ملاحظات</label>
+                        <textarea id="teacherNotes" placeholder="أي معلومات إضافية" rows="2" maxlength="500"></textarea>
+                        <div class="error-message" id="teacherNotesError"></div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> حفظ
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('teacherModal')">
+                            <i class="fas fa-times"></i> إلغاء
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="testModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-clipboard-check"></i> <span id="testModalTitle">إضافة اختبار جديد</span></h3>
+                <button class="close-modal" id="closeTestModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="testForm">
+                    <input type="hidden" id="testId">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="testStudent">الطالبة *</label>
+                            <select id="testStudent" required>
+                                <option value="">اختر الطالبة</option>
+                            </select>
+                            <div class="error-message" id="testStudentError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="testTeacher">المعلمة *</label>
+                            <select id="testTeacher" required>
+                                <option value="">اختر المعلمة</option>
+                            </select>
+                            <div class="error-message" id="testTeacherError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="testType">نوع الاختبار *</label>
+                            <select id="testType" required>
+                                <option value="">اختر نوع الاختبار</option>
+                                <option value="تسميع">تسميع</option>
+                                <option value="تجويد">تجويد</option>
+                                <option value="مراجعة">مراجعة</option>
+                                <option value="منتصف المستوى">منتصف المستوى</option>
+                                <option value="نهاية المستوى">نهاية المستوى</option>
+                            </select>
+                            <div class="error-message" id="testTypeError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="testDate">تاريخ الاختبار *</label>
+                            <input type="date" id="testDate" required>
+                            <div class="error-message" id="testDateError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="testMaterial">المادة المختبرة</label>
+                        <textarea id="testMaterial" placeholder="مثال: من سورة البقرة آية 1-50" rows="2" maxlength="500"></textarea>
+                        <div class="error-message" id="testMaterialError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="testNotes">ملاحظات</label>
+                        <textarea id="testNotes" placeholder="ملاحظات إضافية عن الاختبار" rows="2" maxlength="500"></textarea>
+                        <div class="error-message" id="testNotesError"></div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> حفظ
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('testModal')">
+                            <i class="fas fa-times"></i> إلغاء
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="assignModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-users"></i> توزيع طالبة على حلقة</h3>
+                <button class="close-modal" onclick="closeModal('assignModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="assignStudentInfo" style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 6px;">
+                    <h4 id="assignStudentName" style="margin-bottom: 8px;"></h4>
+                    <p id="assignStudentDetails" style="font-size: 13px;"></p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="selectTeacher">اختر المعلمة *</label>
+                    <select id="selectTeacher" class="form-control" required>
+                        <option value="">اختر المعلمة</option>
+                    </select>
+                    <div class="error-message" id="selectTeacherError"></div>
+                </div>
+                
+                <div id="teacherDetails" style="margin-top: 15px; padding: 12px; background: #e8f4f8; border-radius: 6px; display: none;">
+                    <h5 style="margin-bottom: 6px;">معلومات المعلمة</h5>
+                    <p id="teacherInfo" style="font-size: 13px; margin-bottom: 6px;"></p>
+                    <p id="currentStudents" style="font-size: 13px;"></p>
+                </div>
+                
+                <div class="form-actions">
+                    <button class="btn btn-primary" id="confirmAssignBtn" onclick="confirmAssignment()">
+                        <i class="fas fa-check"></i> تأكيد التوزيع
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeModal('assignModal')">
+                        <i class="fas fa-times"></i> إلغاء
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class QuranSystem {
+            constructor() {
+                this.initStorage();
+                this.loadData();
+            }
+            
+            initStorage() {
+                if (!localStorage.getItem('quran_system_v2')) {
+                    const today = new Date().toISOString().split('T')[0];
+                    const nextWeek = new Date();
+                    nextWeek.setDate(nextWeek.getDate() + 7);
+                    const nextWeekStr = nextWeek.toISOString().split('T')[0];
+                    
+                    const defaultData = {
+                        teachers: [
+                            { 
+                                id: 1, 
+                                name: "الأنسة ريان", 
+                                phone: "0551111111", 
+                                specialty: "تجويد", 
+                                circleName: "حلقة الفجر",
+                                experience: 5,
+                                capacity: 15,
+                                status: "نشطة",
+                                notes: "معلمة تجويد متميزة",
+                                createdAt: today
+                            },
+                            { 
+                                id: 2, 
+                                name: "الأنسة سارة", 
+                                phone: "0552222222", 
+                                specialty: "حفظ", 
+                                circleName: "حلقة الضحى",
+                                experience: 3,
+                                capacity: 12,
+                                status: "نشطة",
+                                notes: "مختصة في الحفظ والتسميع",
+                                createdAt: today
+                            }
+                        ],
+                        waitingStudents: [
+                            {
+                                id: 1,
+                                name: "فاطمة أحمد",
+                                phone: "0555555555",
+                                level: "1",
+                                age: 15,
+                                registrationDate: today,
+                                startDate: today,
+                                notes: "مهتمة بالحفظ، لديها خلفية بسيطة",
+                                status: "بانتظار التوزيع"
+                            },
+                            {
+                                id: 2,
+                                name: "سارة محمد",
+                                phone: "0556666666",
+                                level: "2",
+                                age: 17,
+                                registrationDate: today,
+                                startDate: today,
+                                notes: "لديها خلفية جيدة في القراءة",
+                                status: "بانتظار التوزيع"
+                            },
+                            {
+                                id: 3,
+                                name: "مريم علي",
+                                phone: "0557777777",
+                                level: "3",
+                                age: 16,
+                                registrationDate: today,
+                                startDate: today,
+                                notes: "متميزة في التجويد",
+                                status: "بانتظار التوزيع"
+                            }
+                        ],
+                        circleStudents: [
+                            {
+                                id: 101,
+                                name: "أسماء حسن",
+                                phone: "0511111111",
+                                level: "3",
+                                teacherId: 1,
+                                teacherName: "الأنسة ريان",
+                                circleName: "حلقة الفجر",
+                                age: 18,
+                                startDate: "2023-09-01",
+                                joinDate: "2023-09-01",
+                                lastReview: "2023-10-15",
+                                currentMemorization: "من سورة البقرة إلى النساء",
+                                notes: "متفوقة في الحفظ",
+                                status: "نشطة"
+                            },
+                            {
+                                id: 102,
+                                name: "نورة خالد",
+                                phone: "0512222222",
+                                level: "2",
+                                teacherId: 2,
+                                teacherName: "الأنسة سارة",
+                                circleName: "حلقة الضحى",
+                                age: 16,
+                                startDate: "2023-08-15",
+                                joinDate: "2023-08-15",
+                                lastReview: "2023-10-10",
+                                currentMemorization: "من سورة الفاتحة إلى البقرة",
+                                notes: "ملتزمة بالحفظ",
+                                status: "نشطة"
+                            }
+                        ],
+                        tests: [
+                            {
+                                id: 1,
+                                studentId: 101,
+                                studentName: "أسماء حسن",
+                                teacherId: 1,
+                                teacherName: "الأنسة ريان",
+                                type: "تسميع",
+                                date: nextWeekStr,
+                                material: "من سورة البقرة آية 1-100",
+                                notes: "اختبار منتصف المستوى",
+                                status: "قادم",
+                                result: null,
+                                createdAt: today
+                            },
+                            {
+                                id: 2,
+                                studentId: 102,
+                                studentName: "نورة خالد",
+                                teacherId: 2,
+                                teacherName: "الأنسة سارة",
+                                type: "تجويد",
+                                date: today,
+                                score: 98,
+                                material: "أحكام النون الساكنة والتنوين",
+                                notes: "مراجعة أحكام التجويد",
+                                status: "مكتمل",
+                                result: "ممتاز",
+                                createdAt: today
+                            }
+                        ],
+                        levels: [
+                            { id: 1, name: "المستوى الأول", description: "نور البيان", duration: 75 },
+                            { id: 2, name: "المستوى الثاني", description: "الأجزاء 6-10", duration: 105 },
+                            { id: 3, name: "المستوى الثالث", description: "الأجزاء 11-15", duration: 75 },
+                            { id: 4, name: "المستوى الرابع", description: "الأجزاء 16-20", duration: 150 },
+                            { id: 5, name: "المستوى الخامس", description: "الأجزاء 21-25", duration: 75 },
+                            { id: 6, name: "المستوى السادس", description: "الأجزاء 26-30 + حفظ الجزرية", duration: 75 }
+                        ],
+                        assignmentLog: [],
+                        studentDurations: {}
+                    };
+                    
+                    localStorage.setItem('quran_system_v2', JSON.stringify(defaultData));
+                }
+            }
+            
+            loadData() {
+                const data = JSON.parse(localStorage.getItem('quran_system_v2'));
+                this.data = data;
+                return data;
+            }
+            
+            saveData() {
+                localStorage.setItem('quran_system_v2', JSON.stringify(this.data));
+            }
+            
+            getStats() {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const twoWeeksLater = new Date(today);
+                twoWeeksLater.setDate(today.getDate() + 14);
+                
+                const threeDaysLater = new Date(today);
+                threeDaysLater.setDate(today.getDate() + 3);
+                
+                const upcomingTests = this.data.tests.filter(test => {
+                    if (test.status !== 'قادم') return false;
+                    const testDate = new Date(test.date);
+                    testDate.setHours(0, 0, 0, 0);
+                    return testDate >= today && testDate <= twoWeeksLater;
+                });
+                
+                const urgentTests = this.data.tests.filter(test => {
+                    if (test.status !== 'قادم') return false;
+                    const testDate = new Date(test.date);
+                    testDate.setHours(0, 0, 0, 0);
+                    return testDate >= today && testDate <= threeDaysLater;
+                });
+                
+                return {
+                    totalStudents: this.data.waitingStudents.length + this.data.circleStudents.length,
+                    totalTeachers: this.data.teachers.filter(t => t.status === 'نشطة').length,
+                    totalCircles: this.data.teachers.filter(t => t.status === 'نشطة').length,
+                    waitingStudents: this.data.waitingStudents.length,
+                    circleStudents: this.data.circleStudents.length,
+                    teachers: this.data.teachers.length,
+                    upcomingTests: upcomingTests.length,
+                    urgentTests: urgentTests.length,
+                    totalTests: this.data.tests.filter(t => t.status === 'قادم').length
+                };
+            }
+            
+            getLevelName(levelId) {
+                const level = this.data.levels.find(l => l.id == levelId);
+                return level ? `${level.name} - ${level.description}` : `المستوى ${levelId}`;
+            }
+            
+            getLevelDuration(levelId) {
+                const level = this.data.levels.find(l => l.id == levelId);
+                return level ? level.duration : 90;
+            }
+            
+            getLevelBadge(levelId) {
+                const levelName = this.getLevelName(levelId);
+                return `<span class="level-badge level-${levelId}">${levelName}</span>`;
+            }
+            
+            getRemainingDays(student) {
+                if (!student.startDate) return { days: 0, percentage: 0 };
+                
+                let duration = this.getLevelDuration(student.level);
+                
+                if (this.data.studentDurations && this.data.studentDurations[student.id]) {
+                    duration = this.data.studentDurations[student.id];
+                }
+                
+                const startDate = new Date(student.startDate);
+                const today = new Date();
+                const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+                const remainingDays = Math.max(0, duration - daysPassed);
+                const percentage = Math.min(100, Math.max(0, (daysPassed / duration) * 100));
+                
+                return { 
+                    days: remainingDays, 
+                    percentage: percentage, 
+                    daysPassed: daysPassed,
+                    totalDays: duration,
+                    isCompleted: daysPassed >= duration
+                };
+            }
+            
+            setStudentDuration(studentId, duration) {
+                if (!this.data.studentDurations) {
+                    this.data.studentDurations = {};
+                }
+                this.data.studentDurations[studentId] = parseInt(duration);
+                this.saveData();
+            }
+            
+            getStudentDuration(studentId) {
+                if (this.data.studentDurations && this.data.studentDurations[studentId]) {
+                    return this.data.studentDurations[studentId];
+                }
+                return null;
+            }
+            
+            getEvaluationCard(score) {
+                if (score === null || score === undefined) return '';
+                
+                if (score === 100 || score === 99) {
+                    return `<span class="evaluation-card evaluation-outstanding">تفوق</span>`;
+                } else if (score === 98 || score === 97) {
+                    return `<span class="evaluation-card evaluation-excellent">ممتاز</span>`;
+                } else if (score >= 93 && score <= 96) {
+                    return `<span class="evaluation-card evaluation-silver">جيد جداً</span>`;
+                } else if (score >= 90 && score <= 92) {
+                    return `<span class="evaluation-card evaluation-bronze">جيد</span>`;
+                } else if (score >= 97 && score <= 100) {
+                    return `<span class="evaluation-card evaluation-gold">ذهبية</span>`;
+                } else {
+                    return `<span class="evaluation-card">${score}</span>`;
+                }
+            }
+            
+            getTeachers() {
+                return this.data.teachers;
+            }
+            
+            getActiveTeachers() {
+                return this.data.teachers.filter(t => t.status === 'نشطة');
+            }
+            
+            getTeacher(id) {
+                return this.data.teachers.find(t => t.id === id);
+            }
+            
+            addTeacher(teacher) {
+                const newId = this.data.teachers.length > 0 ? Math.max(...this.data.teachers.map(t => t.id)) + 1 : 1;
+                teacher.id = newId;
+                teacher.status = teacher.status || 'نشطة';
+                teacher.createdAt = new Date().toISOString().split('T')[0];
+                this.data.teachers.push(teacher);
+                this.saveData();
+                return teacher;
+            }
+            
+            updateTeacher(id, updates) {
+                const index = this.data.teachers.findIndex(t => t.id === id);
+                if (index !== -1) {
+                    this.data.teachers[index] = { ...this.data.teachers[index], ...updates };
+                    this.saveData();
+                    return this.data.teachers[index];
+                }
+                return null;
+            }
+            
+            getWaitingStudents() {
+                return this.data.waitingStudents.map(s => ({
+                    ...s,
+                    levelName: this.getLevelName(s.level),
+                    remainingDays: this.getRemainingDays(s)
+                }));
+            }
+            
+            getOnlyWaitingStudents() {
+                return this.data.waitingStudents.map(s => ({
+                    ...s,
+                    levelName: this.getLevelName(s.level),
+                    remainingDays: this.getRemainingDays(s)
+                }));
+            }
+            
+            addWaitingStudent(student) {
+                const waitingMaxId = this.data.waitingStudents.length > 0 ? 
+                    Math.max(...this.data.waitingStudents.map(s => s.id)) : 0;
+                const circleMaxId = this.data.circleStudents.length > 0 ? 
+                    Math.max(...this.data.circleStudents.map(s => s.id)) : 100;
+                const newId = Math.max(waitingMaxId, circleMaxId) + 1;
+                
+                student.id = newId;
+                student.levelName = this.getLevelName(student.level);
+                student.registrationDate = student.registrationDate || new Date().toISOString().split('T')[0];
+                student.startDate = student.startDate || student.registrationDate;
+                student.status = 'بانتظار التوزيع';
+                this.data.waitingStudents.push(student);
+                this.saveData();
+                return student;
+            }
+            
+            updateStudent(id, updates, type = 'waiting') {
+                if (type === 'waiting') {
+                    const index = this.data.waitingStudents.findIndex(s => s.id === id);
+                    if (index !== -1) {
+                        this.data.waitingStudents[index] = { 
+                            ...this.data.waitingStudents[index], 
+                            ...updates 
+                        };
+                        this.data.waitingStudents[index].levelName = this.getLevelName(updates.level || this.data.waitingStudents[index].level);
+                        this.saveData();
+                        return this.data.waitingStudents[index];
+                    }
+                } else if (type === 'circle') {
+                    const index = this.data.circleStudents.findIndex(s => s.id === id);
+                    if (index !== -1) {
+                        this.data.circleStudents[index] = { 
+                            ...this.data.circleStudents[index], 
+                            ...updates 
+                        };
+                        this.data.circleStudents[index].levelName = this.getLevelName(updates.level || this.data.circleStudents[index].level);
+                        this.saveData();
+                        return this.data.circleStudents[index];
+                    }
+                }
+                return null;
+            }
+            
+            getCircleStudents(teacherId = null) {
+                let students = this.data.circleStudents.map(s => ({
+                    ...s,
+                    levelName: this.getLevelName(s.level),
+                    remainingDays: this.getRemainingDays(s)
+                }));
+                
+                if (teacherId) {
+                    students = students.filter(s => s.teacherId === teacherId);
+                }
+                
+                return students;
+            }
+            
+            getOnlyCircleStudents() {
+                return this.data.circleStudents.map(s => ({
+                    ...s,
+                    levelName: this.getLevelName(s.level),
+                    remainingDays: this.getRemainingDays(s)
+                }));
+            }
+            
+            addCircleStudent(student) {
+                const waitingMaxId = this.data.waitingStudents.length > 0 ? 
+                    Math.max(...this.data.waitingStudents.map(s => s.id)) : 0;
+                const circleMaxId = this.data.circleStudents.length > 0 ? 
+                    Math.max(...this.data.circleStudents.map(s => s.id)) : 100;
+                const newId = Math.max(waitingMaxId, circleMaxId) + 1;
+                
+                student.id = newId;
+                student.levelName = this.getLevelName(student.level);
+                student.startDate = student.startDate || new Date().toISOString().split('T')[0];
+                student.joinDate = student.joinDate || student.startDate;
+                student.status = student.status || 'نشطة';
+                this.data.circleStudents.push(student);
+                this.saveData();
+                return student;
+            }
+            
+            moveStudentToCircle(studentId, teacherId) {
+                console.log('توزيع الطالبة:', studentId, 'إلى المعلمة:', teacherId);
+                
+                const waitingIndex = this.data.waitingStudents.findIndex(s => s.id === studentId);
+                if (waitingIndex === -1) {
+                    console.error('الطالبة غير موجودة في قائمة الانتظار');
+                    return null;
+                }
+                
+                const student = this.data.waitingStudents[waitingIndex];
+                const teacher = this.getTeacher(teacherId);
+                
+                if (!teacher) {
+                    console.error('المعلمة غير موجودة');
+                    return null;
+                }
+                
+                const studentsCount = this.getCircleStudents(teacherId).length;
+                if (studentsCount >= teacher.capacity) {
+                    console.error('الحلقة ممتلئة');
+                    return null;
+                }
+                
+                const circleStudent = {
+                    id: student.id,
+                    name: student.name,
+                    phone: student.phone,
+                    level: student.level,
+                    levelName: student.levelName || this.getLevelName(student.level),
+                    age: student.age,
+                    notes: student.notes,
+                    teacherId: teacherId,
+                    teacherName: teacher.name,
+                    circleName: teacher.circleName,
+                    startDate: student.startDate || student.registrationDate,
+                    joinDate: new Date().toISOString().split('T')[0],
+                    status: 'نشطة',
+                    registrationDate: student.registrationDate
+                };
+                
+                try {
+                    this.data.circleStudents.push(circleStudent);
+                    this.data.waitingStudents.splice(waitingIndex, 1);
+                    
+                    if (!this.data.assignmentLog) {
+                        this.data.assignmentLog = [];
+                    }
+                    
+                    this.data.assignmentLog.push({
+                        studentId: studentId,
+                        teacherId: teacherId,
+                        studentName: student.name,
+                        teacherName: teacher.name,
+                        assignmentDate: new Date().toISOString(),
+                        type: 'manual'
+                    });
+                    
+                    this.saveData();
+                    
+                    console.log('تم توزيع الطالبة بنجاح:', circleStudent);
+                    return circleStudent;
+                    
+                } catch (error) {
+                    console.error('خطأ في توزيع الطالبة:', error);
+                    return null;
+                }
+            }
+            
+            getAllStudents() {
+                const waiting = this.getWaitingStudents();
+                const circle = this.getCircleStudents();
+                return [...waiting, ...circle];
+            }
+            
+            getStudent(id) {
+                const waitingStudent = this.data.waitingStudents.find(s => s.id === id);
+                if (waitingStudent) {
+                    return {
+                        ...waitingStudent,
+                        levelName: this.getLevelName(waitingStudent.level),
+                        remainingDays: this.getRemainingDays(waitingStudent)
+                    };
+                }
+                
+                const circleStudent = this.data.circleStudents.find(s => s.id === id);
+                if (circleStudent) {
+                    return {
+                        ...circleStudent,
+                        levelName: this.getLevelName(circleStudent.level),
+                        remainingDays: this.getRemainingDays(circleStudent)
+                    };
+                }
+                
+                return null;
+            }
+            
+            searchStudents(query) {
+                const allStudents = this.getAllStudents();
+                if (!query || query.trim() === '') return allStudents;
+                
+                const searchTerm = query.trim().toLowerCase();
+                
+                return allStudents.filter(student => {
+                    const nameMatch = student.name && student.name.toLowerCase().includes(searchTerm);
+                    const phoneMatch = student.phone && student.phone.includes(query);
+                    const levelMatch = student.levelName && student.levelName.toLowerCase().includes(searchTerm);
+                    
+                    return nameMatch || phoneMatch || levelMatch;
+                });
+            }
+            
+            getTests(status = null) {
+                let tests = this.data.tests;
+                
+                if (status) {
+                    tests = tests.filter(test => test.status === status);
+                }
+                
+                tests = tests.map(test => {
+                    const testDate = new Date(test.date);
+                    const today = new Date();
+                    const diffTime = testDate - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    return {
+                        ...test,
+                        daysLeft: diffDays,
+                        isUrgent: diffDays <= 3 && diffDays >= 0,
+                        evaluationCard: this.getEvaluationCard(test.score)
+                    };
+                });
+                
+                return tests;
+            }
+            
+            getTest(id) {
+                return this.data.tests.find(t => t.id === id);
+            }
+            
+            addTest(test) {
+                try {
+                    if (!test.studentId || !test.teacherId) {
+                        throw new Error('بيانات غير كافية');
+                    }
+                    
+                    const newId = this.data.tests.length > 0 ? Math.max(...this.data.tests.map(t => t.id)) + 1 : 1;
+                    test.id = newId;
+                    test.status = test.status || 'قادم';
+                    test.createdAt = new Date().toISOString().split('T')[0];
+                    
+                    const student = this.getStudent(test.studentId);
+                    const teacher = this.getTeacher(test.teacherId);
+                    
+                    if (!student) {
+                        throw new Error('الطالبة غير موجودة');
+                    }
+                    
+                    if (!teacher) {
+                        throw new Error('المعلمة غير موجودة');
+                    }
+                    
+                    test.studentName = student.name;
+                    test.teacherName = teacher.name;
+                    
+                    this.data.tests.push(test);
+                    this.saveData();
+                    return test;
+                    
+                } catch (error) {
+                    console.error('خطأ في إضافة الاختبار:', error);
+                    throw error;
+                }
+            }
+            
+            updateTest(id, updates) {
+                const index = this.data.tests.findIndex(t => t.id === id);
+                if (index !== -1) {
+                    this.data.tests[index] = { ...this.data.tests[index], ...updates };
+                    this.saveData();
+                    return this.data.tests[index];
+                }
+                return null;
+            }
+            
+            deleteTest(id) {
+                const index = this.data.tests.findIndex(t => t.id === id);
+                if (index !== -1) {
+                    this.data.tests.splice(index, 1);
+                    this.saveData();
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        const quranSystem = new QuranSystem();
+        let currentAssignStudentId = null;
+
+        window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('appContainer').style.display = 'flex';
+            document.getElementById('userNameDisplay').textContent = 'المدير';
+            document.getElementById('userAvatar').textContent = 'م';
+            
+            loadDashboard();
+            setupNavigation();
+            setupMobileMenu();
+            setupFloatingButton();
+            setupFormValidation();
+            updateLastUpdateTime();
+            
+            setupCopyAllDataButton();
+            
+            setInterval(updateLastUpdateTime, 60000);
+        });
+        
+        function updateLastUpdateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('lastUpdate').textContent = timeString;
+        }
+        
+        function setupFormValidation() {
+            const phoneInputs = document.querySelectorAll('input[type="text"][id*="Phone"], input[type="tel"]');
+            phoneInputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    validatePhoneNumber(this);
+                });
+            });
+            
+            const ageInput = document.getElementById('studentAge');
+            if (ageInput) {
+                ageInput.addEventListener('blur', function() {
+                    validateAge(this);
+                });
+            }
+            
+            const capacityInput = document.getElementById('teacherCapacity');
+            if (capacityInput) {
+                capacityInput.addEventListener('blur', function() {
+                    validateCapacity(this);
+                });
+            }
+            
+            const startDateInput = document.getElementById('studentStartDate');
+            if (startDateInput) {
+                const today = new Date().toISOString().split('T')[0];
+                startDateInput.value = today;
+                startDateInput.max = today;
+            }
+            
+            const testDateInput = document.getElementById('testDate');
+            if (testDateInput) {
+                const today = new Date().toISOString().split('T')[0];
+                testDateInput.value = today;
+                testDateInput.min = today;
+            }
+        }
+        
+        function validatePhoneNumber(input) {
+            const value = input.value.trim();
+            const errorId = input.id + 'Error';
+            const errorElement = document.getElementById(errorId);
+            const formGroup = input.closest('.form-group');
+            
+            if (value === '') {
+                showError(formGroup, errorElement, 'رقم الهاتف مطلوب');
+                return false;
+            }
+            
+            hideError(formGroup, errorElement);
+            return true;
+        }
+        
+        function validateAge(input) {
+            const value = parseInt(input.value);
+            const errorId = input.id + 'Error';
+            const errorElement = document.getElementById(errorId);
+            const formGroup = input.closest('.form-group');
+            
+            if (input.value === '') {
+                hideError(formGroup, errorElement);
+                return true;
+            }
+            
+            if (isNaN(value) || value < 5 || value > 50) {
+                showError(formGroup, errorElement, 'يجب أن يكون العمر بين 5 و 50 سنة');
+                return false;
+            }
+            
+            hideError(formGroup, errorElement);
+            return true;
+        }
+        
+        function validateCapacity(input) {
+            const value = parseInt(input.value);
+            const errorId = input.id + 'Error';
+            const errorElement = document.getElementById(errorId);
+            const formGroup = input.closest('.form-group');
+            
+            if (isNaN(value) || value < 1 || value > 50) {
+                showError(formGroup, errorElement, 'يجب أن تكون الطاقة الاستيعابية بين 1 و 50 طالبة');
+                return false;
+            }
+            
+            hideError(formGroup, errorElement);
+            return true;
+        }
+        
+        function showError(formGroup, errorElement, message) {
+            formGroup.classList.add('has-error');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+        
+        function hideError(formGroup, errorElement) {
+            formGroup.classList.remove('has-error');
+            errorElement.style.display = 'none';
+        }
+        
+        function setupNavigation() {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    document.querySelectorAll('.menu-item').forEach(el => {
+                        el.classList.remove('active');
+                    });
+                    
+                    this.classList.add('active');
+                    
+                    document.querySelectorAll('.page').forEach(page => {
+                        page.style.display = 'none';
+                    });
+                    
+                    const pageId = this.getAttribute('data-page') + 'Page';
+                    document.getElementById(pageId).style.display = 'block';
+                    
+                    switch(pageId) {
+                        case 'dashboardPage':
+                            loadDashboard();
+                            break;
+                        case 'waitingPage':
+                            loadWaitingPage();
+                            break;
+                        case 'testsPage':
+                            loadTestsPage();
+                            break;
+                        case 'teachersPage':
+                            loadTeachersPage();
+                            break;
+                        case 'allStudentsPage':
+                            loadAllStudentsPage();
+                            break;
+                        case 'reportsPage':
+                            loadReportsPage();
+                            break;
+                    }
+                    
+                    if (window.innerWidth <= 1024) {
+                        closeMobileMenu();
+                    }
+                });
+            });
+            
+            document.getElementById('addStudentBtn')?.addEventListener('click', () => openAddStudentModal());
+            document.getElementById('addWaitingStudentBtn')?.addEventListener('click', () => openAddStudentModal());
+            document.getElementById('addNewStudentBtn')?.addEventListener('click', () => openAddStudentModal());
+            document.getElementById('addTeacherBtn')?.addEventListener('click', () => openAddTeacherModal());
+            document.getElementById('addTestBtn')?.addEventListener('click', () => openAddTestModal());
+            document.getElementById('addNewTestBtn')?.addEventListener('click', () => openAddTestModal());
+            
+            document.getElementById('quickAssignBtn')?.addEventListener('click', () => {
+                const waitingStudents = quranSystem.getOnlyWaitingStudents();
+                if (waitingStudents.length > 0) {
+                    quickAssignAllFromDashboard();
+                }
+            });
+            
+            document.getElementById('autoAssignAllBtn')?.addEventListener('click', autoAssignAll);
+            
+            document.getElementById('closeStudentModal')?.addEventListener('click', () => closeModal('studentModal'));
+            document.getElementById('closeTeacherModal')?.addEventListener('click', () => closeModal('teacherModal'));
+            document.getElementById('closeTestModal')?.addEventListener('click', () => closeModal('testModal'));
+            
+            document.getElementById('studentForm')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveStudent();
+            });
+            
+            document.getElementById('teacherForm')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveTeacher();
+            });
+            
+            document.getElementById('testForm')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveTest();
+            });
+            
+            document.getElementById('studentType')?.addEventListener('change', function() {
+                const circleGroup = document.getElementById('circleSelectionGroup');
+                if (this.value === 'circle') {
+                    circleGroup.style.display = 'block';
+                    loadCirclesForSelection();
+                } else {
+                    circleGroup.style.display = 'none';
+                }
+            });
+            
+            setupSearchAndFilters();
+            
+            document.querySelectorAll('.tab-btn').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    document.querySelectorAll('.tab-btn').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    this.classList.add('active');
+                    
+                    if (tabName === 'upcoming') {
+                        loadUpcomingTests();
+                    } else if (tabName === 'completed') {
+                        loadCompletedTests();
+                    } else if (tabName === 'all') {
+                        loadAllTests();
+                    }
+                });
+            });
+        }
+        
+        function setupSearchAndFilters() {
+            const searchWaiting = document.getElementById('searchWaiting');
+            const searchWaitingMobile = document.getElementById('searchWaitingMobile');
+            
+            if (searchWaiting) {
+                searchWaiting.addEventListener('input', function(e) {
+                    filterWaitingStudents(e.target.value);
+                });
+            }
+            
+            if (searchWaitingMobile) {
+                searchWaitingMobile.addEventListener('input', function(e) {
+                    filterWaitingStudents(e.target.value);
+                });
+            }
+            
+            const searchAllStudents = document.getElementById('searchAllStudents');
+            const searchAllStudentsMobile = document.getElementById('searchAllStudentsMobile');
+            const filterLevel = document.getElementById('filterLevel');
+            const filterLevelMobile = document.getElementById('filterLevelMobile');
+            
+            const filterAllFunc = () => {
+                const query = (searchAllStudents?.value || searchAllStudentsMobile?.value || '').trim();
+                const level = (filterLevel?.value || filterLevelMobile?.value || '');
+                filterAllStudents(query, level);
+            };
+            
+            if (searchAllStudents) searchAllStudents.addEventListener('input', filterAllFunc);
+            if (searchAllStudentsMobile) searchAllStudentsMobile.addEventListener('input', filterAllFunc);
+            if (filterLevel) filterLevel.addEventListener('change', filterAllFunc);
+            if (filterLevelMobile) filterLevelMobile.addEventListener('change', filterAllFunc);
+            
+            const filterTestStatusMobile = document.getElementById('filterTestStatusMobile');
+            if (filterTestStatusMobile) {
+                filterTestStatusMobile.addEventListener('change', function() {
+                    filterTests(this.value);
+                });
+            }
+        }
+        
+        function setupMobileMenu() {
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            overlay.addEventListener('click', closeMobileMenu);
+            
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', closeMobileMenu);
+            });
+        }
+        
+        function closeMobileMenu() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        function setupFloatingButton() {
+            const floatingBtn = document.getElementById('floatingActionBtn');
+            if (!floatingBtn) return;
+            
+            floatingBtn.addEventListener('click', function() {
+                const activePage = document.querySelector('.page[style="display: block;"]');
+                if (!activePage) return;
+                
+                const pageId = activePage.id;
+                
+                switch(pageId) {
+                    case 'dashboardPage':
+                        document.getElementById('addStudentBtn').click();
+                        break;
+                    case 'waitingPage':
+                        document.getElementById('addWaitingStudentBtn').click();
+                        break;
+                    case 'testsPage':
+                        document.getElementById('addNewTestBtn').click();
+                        break;
+                    case 'teachersPage':
+                        document.getElementById('addTeacherBtn').click();
+                        break;
+                    case 'allStudentsPage':
+                        document.getElementById('addNewStudentBtn').click();
+                        break;
+                    default:
+                        document.getElementById('addStudentBtn').click();
+                }
+            });
+        }
+        
+        function setupCopyAllDataButton() {
+            const copyBtn = document.getElementById('copyAllDataBtn');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', copyAllData);
+            }
+        }
+        
+        function copyAllData() {
+            try {
+                const stats = quranSystem.getStats();
+                const waitingStudents = quranSystem.getOnlyWaitingStudents();
+                const circleStudents = quranSystem.getOnlyCircleStudents();
+                const teachers = quranSystem.getActiveTeachers();
+                const upcomingTests = quranSystem.getTests('قادم');
+                const allStudents = quranSystem.getAllStudents();
+                
+                let allData = `
+نظام منهجية التبوة - تقرير شامل
+================================
+تاريخ التقرير: ${new Date().toLocaleDateString('ar-SA')}
+وقت التقرير: ${new Date().toLocaleTimeString('ar-SA')}
+
+إحصائيات النظام:
+================
+• إجمالي الطالبات: ${stats.totalStudents} طالبة
+• الطالبات بانتظار التوزيع: ${stats.waitingStudents} طالبة
+• الطالبات في الحلقات: ${stats.circleStudents} طالبة
+• عدد المعلمات النشطات: ${stats.totalTeachers} معلمة
+• عدد الحلقات النشطة: ${stats.totalCircles} حلقة
+• الاختبارات القادمة: ${stats.upcomingTests} اختبار
+• الاختبارات العاجلة: ${stats.urgentTests} اختبار
+
+تفاصيل الطالبات بانتظار التوزيع:
+================================
+${waitingStudents.length > 0 ? waitingStudents.map((s, i) => `
+${i+1}. ${s.name} - ${s.phone}
+   المستوى: ${s.levelName}
+   العمر: ${s.age || 'غير محدد'}
+   المدة المتبقية: ${s.remainingDays?.days || 0} يوم
+   تاريخ التسجيل: ${new Date(s.registrationDate).toLocaleDateString('ar-SA')}
+   ${s.notes ? `ملاحظات: ${s.notes}` : ''}
+`).join('') : 'لا توجد طالبات بانتظار التوزيع'}
+
+تفاصيل الطالبات في الحلقات:
+===========================
+${circleStudents.length > 0 ? circleStudents.map((s, i) => `
+${i+1}. ${s.name} - ${s.phone}
+   المستوى: ${s.levelName}
+   الحلقة: ${s.circleName}
+   المعلمة: ${s.teacherName}
+   العمر: ${s.age || 'غير محدد'}
+   المدة المتبقية: ${s.remainingDays?.days || 0} يوم
+   تاريخ الانضمام: ${new Date(s.joinDate).toLocaleDateString('ar-SA')}
+   ${s.notes ? `ملاحظات: ${s.notes}` : ''}
+`).join('') : 'لا توجد طالبات في الحلقات'}
+
+تفاصيل المعلمات والحلقات:
+=========================
+${teachers.length > 0 ? teachers.map((t, i) => `
+${i+1}. ${t.name} - ${t.phone}
+   التخصص: ${t.specialty}
+   الحلقة: ${t.circleName}
+   الخبرة: ${t.experience || 0} سنوات
+   الطاقة الاستيعابية: ${t.capacity} طالبة
+   عدد الطالبات الحاليات: ${quranSystem.getCircleStudents(t.id).length}
+   ${t.notes ? `ملاحظات: ${t.notes}` : ''}
+`).join('') : 'لا توجد معلمات مسجلة'}
+
+تفاصيل الاختبارات القادمة:
+=========================
+${upcomingTests.length > 0 ? upcomingTests.map((t, i) => `
+${i+1}. اختبار ${t.type} للطالبة ${t.studentName}
+   المعلمة: ${t.teacherName}
+   التاريخ: ${new Date(t.date).toLocaleDateString('ar-SA')} ${t.time ? `- ${t.time}` : ''}
+   ${t.material ? `المادة: ${t.material}` : ''}
+   ${t.notes ? `ملاحظات: ${t.notes}` : ''}
+`).join('') : 'لا توجد اختبارات قادمة'}
+
+مجموع الطالبات الكلي: ${allStudents.length} طالبة
+===========================================
+                `;
+                
+                navigator.clipboard.writeText(allData).then(() => {
+                    showAlert('تم نسخ جميع المعلومات بنجاح! يمكنك لصقها الآن في أي مكان.', 'success');
+                }).catch(err => {
+                    console.error('فشل نسخ النص: ', err);
+                    showAlert('فشل نسخ المعلومات. يرجى المحاولة يدوياً.', 'error');
+                });
+                
+            } catch (error) {
+                console.error('خطأ في تجميع البيانات:', error);
+                showAlert('حدث خطأ أثناء تجميع البيانات للنسخ.', 'error');
+            }
+        }
+        
+        function loadDashboard() {
+            const stats = quranSystem.getStats();
+            const tests = quranSystem.getTests('قادم').slice(0, 5);
+            const waitingStudents = quranSystem.getOnlyWaitingStudents();
+            const circleStudents = quranSystem.getOnlyCircleStudents();
+            
+            document.getElementById('dashboardStats').innerHTML = `
+                <div class="stat-card students">
+                    <h3><i class="fas fa-users"></i> إجمالي الطالبات</h3>
+                    <div class="number">${stats.totalStudents}</div>
+                    <div class="subtext">طالبة في النظام</div>
+                </div>
+                <div class="stat-card waiting">
+                    <h3><i class="fas fa-user-clock"></i> بانتظار التوزيع</h3>
+                    <div class="number">${stats.waitingStudents}</div>
+                    <div class="subtext">طالبة تحتاج توزيع</div>
+                </div>
+                <div class="stat-card test">
+                    <h3><i class="fas fa-clipboard-check"></i> اختبارات قادمة</h3>
+                    <div class="number">${stats.upcomingTests}</div>
+                    <div class="subtext">اختبار خلال أسبوعين</div>
+                </div>
+                <div class="stat-card teachers">
+                    <h3><i class="fas fa-chalkboard-teacher"></i> المعلمات النشطات</h3>
+                    <div class="number">${stats.totalTeachers}</div>
+                    <div class="subtext">معلمة في النظام</div>
+                </div>
+            `;
+            
+            updateMenuBadges(stats);
+            
+            updateQuickAlerts(stats, waitingStudents);
+            
+            const allStudents = [...waitingStudents, ...circleStudents]
+                .sort((a, b) => new Date(b.registrationDate || b.joinDate) - new Date(a.registrationDate || a.joinDate))
+                .slice(0, 5);
+            
+            renderNewStudentsTable(allStudents);
+            
+            const quickAssignBtn = document.getElementById('quickAssignBtn');
+            if (waitingStudents.length > 0) {
+                quickAssignBtn.style.display = 'flex';
+            } else {
+                quickAssignBtn.style.display = 'none';
+            }
+            
+            loadUpcomingTestsDashboard(tests);
+        }
+        
+        function updateQuickAlerts(stats, waitingStudents) {
+            const alertsContainer = document.getElementById('quickAlerts');
+            alertsContainer.innerHTML = '';
+            
+            if (waitingStudents.length > 0) {
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-warning';
+                alert.innerHTML = `
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>يوجد ${waitingStudents.length} طالبة بانتظار التوزيع. 
+                    <a href="#" onclick="showWaitingPage()" style="color: #856404; text-decoration: underline; margin-right: 5px;">عرض الطالبات</a>
+                    أو 
+                    <a href="#" onclick="quickAssignAllFromDashboard()" style="color: #856404; text-decoration: underline; margin-right: 5px;">توزيع سريع</a>
+                    </span>
+                `;
+                alertsContainer.appendChild(alert);
+            }
+            
+            const urgentTests = quranSystem.getTests('قادم').filter(t => t.isUrgent);
+            if (urgentTests.length > 0) {
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-error';
+                alert.innerHTML = `
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>يوجد ${urgentTests.length} اختبار عاجل خلال 3 أيام. 
+                    <a href="#" onclick="showTestsPage()" style="color: #721c24; text-decoration: underline; margin-right: 5px;">عرض الاختبارات</a>
+                    </span>
+                `;
+                alertsContainer.appendChild(alert);
+            }
+        }
+        
+        function renderNewStudentsTable(students) {
+            const tableBody = document.getElementById('newStudentsTableBody');
+            tableBody.innerHTML = '';
+            
+            if (students.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 25px;">
+                            <i class="fas fa-user-plus" style="font-size: 24px; margin-bottom: 10px; display: block; color: var(--text-light);"></i>
+                            <span style="color: var(--text-light);">لا توجد طالبات مسجلة</span>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                students.forEach(student => {
+                    const isInCircle = student.teacherId;
+                    const status = isInCircle ? 'في حلقة' : 'بانتظار التوزيع';
+                    const statusClass = isInCircle ? 'active' : 'pending';
+                    const circleName = student.circleName || 'غير موزعة';
+                    const remaining = student.remainingDays || { days: 0, percentage: 0 };
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${student.name}</strong></td>
+                        <td>${quranSystem.getLevelBadge(student.level)}</td>
+                        <td>
+                            ${remaining.days > 0 ? `
+                                <div style="font-size: 11px;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>${remaining.days} يوم</span>
+                                        <span>${Math.round(remaining.percentage)}%</span>
+                                    </div>
+                                    <div class="duration-bar">
+                                        <div class="duration-progress" style="width: ${remaining.percentage}%"></div>
+                                    </div>
+                                </div>
+                            ` : '<span class="status completed">مكتمل</span>'}
+                        </td>
+                        <td>${circleName}</td>
+                        <td><span class="status ${statusClass}">${status}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view btn-small" onclick="viewStudent(${student.id})" title="عرض">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn edit btn-small" onclick="editStudent(${student.id})" title="تعديل">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                ${!isInCircle ? `
+                                <button class="action-btn move btn-small" onclick="openAssignModal(${student.id})" title="توزيع">
+                                    <i class="fas fa-user-plus"></i>
+                                </button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+        }
+        
+        function loadUpcomingTestsDashboard(tests) {
+            const container = document.getElementById('upcomingTestsList');
+            if (!container) return;
+            
+            if (tests.length === 0) {
+                container.innerHTML = `
+                    <div style="padding: 30px; text-align: center; color: var(--text-light);">
+                        <i class="fas fa-clipboard-check" style="font-size: 40px; margin-bottom: 15px; display: block; opacity: 0.3;"></i>
+                        <p>لا توجد اختبارات قادمة</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = '';
+                tests.forEach(test => {
+                    const testDate = new Date(test.date);
+                    const today = new Date();
+                    const diffTime = testDate - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    const testCard = document.createElement('div');
+                    testCard.className = `test-card ${diffDays <= 3 ? 'urgent' : ''}`;
+                    testCard.innerHTML = `
+                        <div class="test-header">
+                            <div class="test-info">
+                                <h4>${test.studentName}</h4>
+                                <p>
+                                    <i class="fas fa-chalkboard-teacher"></i> ${test.teacherName}
+                                    <span style="margin: 0 8px;">|</span>
+                                    <i class="fas fa-graduation-cap"></i> ${test.type}
+                                    ${test.score ? `<span style="margin: 0 8px;">|</span>${quranSystem.getEvaluationCard(test.score)}` : ''}
+                                </p>
+                                <p>
+                                    <i class="fas fa-calendar"></i> ${testDate.toLocaleDateString('ar-SA')}
+                                </p>
+                            </div>
+                            <div class="days-left ${diffDays <= 3 ? 'urgent' : ''}">
+                                ${diffDays === 0 ? 'اليوم' : diffDays === 1 ? 'غداً' : `${diffDays} يوم`}
+                            </div>
+                        </div>
+                        ${test.material ? `<p style="margin: 8px 0; font-size: 13px; color: var(--text-light);"><strong>المادة:</strong> ${test.material}</p>` : ''}
+                        ${test.notes ? `<p style="font-size: 12px; color: var(--text-light);"><strong>ملاحظات:</strong> ${test.notes}</p>` : ''}
+                        <div class="action-buttons" style="margin-top: 12px;">
+                            <button class="action-btn edit btn-small" onclick="editTest(${test.id})">
+                                <i class="fas fa-edit"></i> تعديل
+                            </button>
+                            <button class="action-btn test btn-small" onclick="completeTest(${test.id})">
+                                <i class="fas fa-check"></i> إكمال
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(testCard);
+                });
+            }
+        }
+        
+        function loadWaitingPage() {
+            const stats = quranSystem.getStats();
+            const waitingStudents = quranSystem.getOnlyWaitingStudents();
+            
+            document.getElementById('waitingCount').textContent = stats.waitingStudents;
+            document.getElementById('totalStudentsCount').textContent = stats.totalStudents;
+            document.getElementById('activeCirclesCount').textContent = stats.totalCircles;
+            
+            renderWaitingStudentsTable(waitingStudents);
+        }
+        
+        function renderWaitingStudentsTable(students) {
+            const tableBody = document.getElementById('waitingStudentsTableBody');
+            tableBody.innerHTML = '';
+            
+            if (students.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 30px;">
+                            <i class="fas fa-user-clock" style="font-size: 40px; margin-bottom: 15px; display: block; color: var(--text-light); opacity: 0.3;"></i>
+                            <h3 style="color: var(--text-light); margin-bottom: 8px;">لا توجد طالبات بانتظار التوزيع</h3>
+                            <p style="color: var(--text-light);">جميع الطالبات موزعات على الحلقات ✓</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            const availableTeachers = quranSystem.getActiveTeachers().filter(teacher => {
+                const studentsCount = quranSystem.getCircleStudents(teacher.id).length;
+                return studentsCount < teacher.capacity;
+            });
+            
+            students.forEach((student, index) => {
+                const row = document.createElement('tr');
+                const remaining = student.remainingDays || { days: 0, percentage: 0 };
+                
+                let quickAssignOptions = '';
+                if (availableTeachers.length > 0) {
+                    quickAssignOptions = `
+                        <select class="quick-assign-select" style="font-size: 11px; padding: 3px 6px; margin-left: 4px;" 
+                                onchange="quickAssign(${student.id}, this.value)" title="توزيع سريع">
+                            <option value="">توزيع سريع...</option>
+                            ${availableTeachers.map(teacher => {
+                                const studentsCount = quranSystem.getCircleStudents(teacher.id).length;
+                                const available = teacher.capacity - studentsCount;
+                                return `<option value="${teacher.id}" ${available <= 0 ? 'disabled' : ''}>
+                                    ${teacher.circleName} (${available} مقاعد)
+                                </option>`;
+                            }).join('')}
+                        </select>
+                    `;
+                }
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>
+                        <strong>${student.name}</strong><br>
+                        <small style="color: var(--text-light); font-size: 11px;">${student.phone}</small>
+                    </td>
+                    <td>${student.phone}</td>
+                    <td>${quranSystem.getLevelBadge(student.level)}</td>
+                    <td>
+                        ${remaining.days > 0 ? `
+                            <div style="font-size: 11px;">
+                                ${remaining.days} يوم متبقي<br>
+                                <div class="duration-bar" style="margin-top: 4px;">
+                                    <div class="duration-progress" style="width: ${remaining.percentage}%"></div>
+                                </div>
+                            </div>
+                        ` : '<span class="status completed">مكتمل</span>'}
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn edit" onclick="editStudent(${student.id})" title="تعديل">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn move" onclick="openAssignModal(${student.id})" title="توزيع يدوي">
+                                <i class="fas fa-user-plus"></i>
+                            </button>
+                            ${quickAssignOptions}
+                            <button class="action-btn delete" onclick="deleteStudent(${student.id}, 'waiting')" title="حذف">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function filterWaitingStudents(query) {
+            const waitingStudents = quranSystem.getWaitingStudents();
+            if (!query) {
+                renderWaitingStudentsTable(waitingStudents);
+                return;
+            }
+            
+            const filtered = waitingStudents.filter(student => 
+                student.name.includes(query) || 
+                student.phone.includes(query) ||
+                student.notes?.includes(query)
+            );
+            
+            renderWaitingStudentsTable(filtered);
+        }
+        
+        function quickAssign(studentId, teacherId) {
+            if (!studentId || !teacherId) {
+                showAlert('بيانات غير كافية للتوزيع', 'error');
+                return false;
+            }
+            
+            const result = quranSystem.moveStudentToCircle(studentId, parseInt(teacherId));
+            if (result) {
+                showAlert(`تم توزيع الطالبة ${result.name} تلقائياً على ${result.circleName}`, 'success');
+                updateAllViews();
+                return true;
+            } else {
+                showAlert('فشل توزيع الطالبة. تأكد من وجود مقاعد متاحة.', 'error');
+                return false;
+            }
+        }
+        
+        function autoAssignAll() {
+            const waitingStudents = quranSystem.getOnlyWaitingStudents();
+            const availableTeachers = quranSystem.getActiveTeachers().filter(teacher => {
+                const studentsCount = quranSystem.getCircleStudents(teacher.id).length;
+                return studentsCount < teacher.capacity;
+            });
+            
+            if (waitingStudents.length === 0) {
+                showAlert('لا توجد طالبات بانتظار التوزيع', 'info');
+                return;
+            }
+            
+            if (availableTeachers.length === 0) {
+                showAlert('لا توجد حلقات متاحة للتوزيع', 'error');
+                return;
+            }
+            
+            if (!confirm(`هل تريد توزيع ${waitingStudents.length} طالبة تلقائياً على الحلقات المتاحة؟`)) {
+                return;
+            }
+            
+            let assignedCount = 0;
+            let failedCount = 0;
+            
+            availableTeachers.sort((a, b) => {
+                const aUsed = quranSystem.getCircleStudents(a.id).length;
+                const bUsed = quranSystem.getCircleStudents(b.id).length;
+                const aAvailable = a.capacity - aUsed;
+                const bAvailable = b.capacity - bUsed;
+                return bAvailable - aAvailable;
+            });
+            
+            waitingStudents.forEach(student => {
+                let assigned = false;
+                
+                for (const teacher of availableTeachers) {
+                    const studentsCount = quranSystem.getCircleStudents(teacher.id).length;
+                    if (studentsCount < teacher.capacity) {
+                        const result = quranSystem.moveStudentToCircle(student.id, teacher.id);
+                        if (result) {
+                            assignedCount++;
+                            assigned = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!assigned) {
+                    failedCount++;
+                }
+            });
+            
+            const message = `
+                تم توزيع ${assignedCount} طالبة بنجاح ✓
+                ${failedCount > 0 ? `\nفشل توزيع ${failedCount} طالبة (لا توجد حلقات متاحة)` : ''}
+            `;
+            
+            showAlert(message, assignedCount > 0 ? 'success' : 'warning');
+            
+            setTimeout(() => {
+                updateAllViews();
+                if (document.getElementById('waitingPage').style.display === 'block') {
+                    loadWaitingPage();
+                }
+            }, 1000);
+        }
+        
+        function quickAssignAllFromDashboard() {
+            const waitingStudents = quranSystem.getOnlyWaitingStudents();
+            const availableTeachers = quranSystem.getActiveTeachers().filter(teacher => {
+                const studentsCount = quranSystem.getCircleStudents(teacher.id).length;
+                return studentsCount < teacher.capacity;
+            });
+            
+            if (waitingStudents.length === 0) {
+                showAlert('لا توجد طالبات بانتظار التوزيع', 'info');
+                return;
+            }
+            
+            if (availableTeachers.length === 0) {
+                showAlert('لا توجد حلقات متاحة للتوزيع', 'error');
+                return;
+            }
+            
+            if (!confirm(`توزيع ${waitingStudents.length} طالبة تلقائياً؟`)) {
+                return;
+            }
+            
+            let assignedCount = 0;
+            
+            availableTeachers.sort((a, b) => {
+                const aUsed = quranSystem.getCircleStudents(a.id).length;
+                const bUsed = quranSystem.getCircleStudents(b.id).length;
+                const aAvailable = a.capacity - aUsed;
+                const bAvailable = b.capacity - bUsed;
+                return bAvailable - aAvailable;
+            });
+            
+            waitingStudents.forEach(student => {
+                for (const teacher of availableTeachers) {
+                    const studentsCount = quranSystem.getCircleStudents(teacher.id).length;
+                    if (studentsCount < teacher.capacity) {
+                        const result = quranSystem.moveStudentToCircle(student.id, teacher.id);
+                        if (result) {
+                            assignedCount++;
+                            break;
+                        }
+                    }
+                }
+            });
+            
+            showAlert(`تم توزيع ${assignedCount} طالبة بنجاح ✓`, 'success');
+            updateAllViews();
+        }
+        
+        function loadTestsPage() {
+            const stats = quranSystem.getStats();
+            
+            document.getElementById('upcomingTestsCount').textContent = stats.upcomingTests;
+            document.getElementById('urgentTestsCount').textContent = stats.urgentTests;
+            document.getElementById('studentsToTestCount').textContent = stats.circleStudents;
+            
+            loadUpcomingTests();
+        }
+        
+        function loadUpcomingTests() {
+            const tests = quranSystem.getTests('قادم');
+            renderTestsList(tests, 'قادمة');
+        }
+        
+        function loadCompletedTests() {
+            const tests = quranSystem.getTests('مكتمل');
+            renderTestsList(tests, 'مكتملة');
+        }
+        
+        function loadAllTests() {
+            const tests = quranSystem.getTests();
+            renderTestsList(tests, 'جميع الاختبارات');
+        }
+        
+        function filterTests(status) {
+            if (!status) {
+                loadUpcomingTests();
+                return;
+            }
+            
+            const tests = quranSystem.getTests(status);
+            renderTestsList(tests, `${status}ة`);
+        }
+        
+        function renderTestsList(tests, title) {
+            const container = document.getElementById('testsContent');
+            
+            if (tests.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-check"></i>
+                        <h3>لا توجد اختبارات ${title}</h3>
+                        <p>يمكنك إضافة اختبار جديد من الزر أعلاه</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = '';
+                tests.forEach(test => {
+                    const testDate = new Date(test.date);
+                    const today = new Date();
+                    const diffTime = testDate - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    const testCard = document.createElement('div');
+                    testCard.className = `test-card ${test.isUrgent ? 'urgent' : ''}`;
+                    testCard.innerHTML = `
+                        <div class="test-header">
+                            <div class="test-info">
+                                <h4>${test.studentName}</h4>
+                                <p>
+                                    <i class="fas fa-chalkboard-teacher"></i> ${test.teacherName}
+                                    <span style="margin: 0 8px;">|</span>
+                                    <i class="fas fa-graduation-cap"></i> ${test.type}
+                                    ${test.score ? `<span style="margin: 0 8px;">|</span>${test.evaluationCard}` : ''}
+                                </p>
+                                <p>
+                                    <i class="fas fa-calendar"></i> ${testDate.toLocaleDateString('ar-SA')}
+                                </p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                ${test.status === 'قادم' ? `
+                                    <div class="days-left ${diffDays <= 3 ? 'urgent' : ''}">
+                                        ${diffDays === 0 ? 'اليوم' : diffDays === 1 ? 'غداً' : `${diffDays} يوم`}
+                                    </div>
+                                ` : ''}
+                                <span class="status ${test.status === 'مكتمل' ? 'completed' : test.status === 'قادم' ? 'upcoming' : 'inactive'}">
+                                    ${test.status}
+                                </span>
+                            </div>
+                        </div>
+                        ${test.material ? `<p style="margin: 8px 0; font-size: 13px; color: var(--text-light);"><strong>المادة:</strong> ${test.material}</p>` : ''}
+                        ${test.result ? `<p style="margin: 8px 0; font-size: 13px; color: var(--success);"><strong>النتيجة:</strong> ${test.result}</p>` : ''}
+                        ${test.notes ? `<p style="font-size: 12px; color: var(--text-light);"><strong>ملاحظات:</strong> ${test.notes}</p>` : ''}
+                        <div class="action-buttons" style="margin-top: 12px;">
+                            <button class="action-btn edit" onclick="editTest(${test.id})">
+                                <i class="fas fa-edit"></i> تعديل
+                            </button>
+                            ${test.status === 'قادم' ? `
+                                <button class="action-btn test" onclick="completeTest(${test.id})">
+                                    <i class="fas fa-check"></i> إكمال
+                                </button>
+                            ` : ''}
+                            <button class="action-btn delete" onclick="deleteTest(${test.id})">
+                                <i class="fas fa-trash"></i> حذف
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(testCard);
+                });
+            }
+        }
+        
+        function loadTeachersPage() {
+            const stats = quranSystem.getStats();
+            const teachers = quranSystem.getActiveTeachers();
+            
+            document.getElementById('teachersCount').textContent = stats.totalTeachers;
+            document.getElementById('circlesCount').textContent = stats.totalCircles;
+            document.getElementById('circleStudentsCount').textContent = stats.circleStudents;
+            
+            const container = document.getElementById('teachersListContainer');
+            container.innerHTML = '';
+            
+            if (teachers.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <h3>لا توجد معلمات مسجلات</h3>
+                        <p>يمكنك إضافة معلمة جديدة من الزر أعلاه</p>
+                    </div>
+                `;
+            } else {
+                teachers.forEach(teacher => {
+                    const students = quranSystem.getCircleStudents(teacher.id);
+                    const usedCapacity = students.length;
+                    const capacityPercent = Math.round((usedCapacity / teacher.capacity) * 100);
+                    
+                    const teacherCard = document.createElement('div');
+                    teacherCard.className = 'teacher-with-students';
+                    teacherCard.innerHTML = `
+                        <div class="teacher-header">
+                            <div class="teacher-info">
+                                <h4>${teacher.name}</h4>
+                                <p>
+                                    <i class="fas fa-phone"></i> ${teacher.phone}
+                                    <span style="margin: 0 8px;">|</span>
+                                    <i class="fas fa-graduation-cap"></i> ${teacher.specialty}
+                                    <span style="margin: 0 8px;">|</span>
+                                    <i class="fas fa-briefcase"></i> ${teacher.experience || 0} سنوات خبرة
+                                </p>
+                                <p><i class="fas fa-school"></i> ${teacher.circleName}</p>
+                                ${teacher.notes ? `<p style="margin-top: 4px; color: var(--text-light); font-size: 12px;">${teacher.notes}</p>` : ''}
+                            </div>
+                            <div style="text-align: left;">
+                                <span style="font-size: 24px; font-weight: bold; color: var(--primary-dark);">${usedCapacity}</span>
+                                <span style="color: var(--text-light); font-size: 13px;">/${teacher.capacity}</span>
+                                <div style="width: 100px; height: 6px; background: #e9ecef; border-radius: 3px; margin-top: 4px; overflow: hidden;">
+                                    <div style="width: ${capacityPercent}%; height: 100%; background: ${capacityPercent > 90 ? 'var(--danger)' : capacityPercent > 70 ? 'var(--warning)' : 'var(--success)'};"></div>
+                                </div>
+                                <div style="font-size: 11px; color: var(--text-light); margin-top: 4px;">${capacityPercent}% ممتلئ</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <h5 style="color: var(--primary-dark); margin-bottom: 8px; font-size: 15px;">
+                                <i class="fas fa-user-graduate"></i> طالبات الحلقة (${students.length})
+                            </h5>
+                            
+                            ${students.length > 0 ? `
+                                <div style="overflow-x: auto;">
+                                    <table style="width: 100%; font-size: 13px;">
+                                        <thead>
+                                            <tr>
+                                                <th>الاسم</th>
+                                                <th>المستوى</th>
+                                                <th>المدة المتبقية</th>
+                                                <th>تاريخ الانضمام</th>
+                                                <th>الإجراءات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${students.map(student => {
+                                                const remaining = student.remainingDays || { days: 0, percentage: 0 };
+                                                return `
+                                                    <tr>
+                                                        <td><strong>${student.name}</strong></td>
+                                                        <td>${quranSystem.getLevelBadge(student.level)}</td>
+                                                        <td>
+                                                            ${remaining.days > 0 ? `
+                                                                <div style="font-size: 11px;">
+                                                                    ${remaining.days} يوم
+                                                                    <div class="duration-bar" style="margin-top: 2px;">
+                                                                        <div class="duration-progress" style="width: ${remaining.percentage}%"></div>
+                                                                    </div>
+                                                                </div>
+                                                            ` : '<span class="status completed">مكتمل</span>'}
+                                                        </td>
+                                                        <td>${new Date(student.joinDate).toLocaleDateString('ar-SA')}</td>
+                                                        <td>
+                                                            <button class="action-btn view btn-small" onclick="viewStudent(${student.id})">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                            <button class="action-btn edit btn-small" onclick="editStudent(${student.id})">
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                `;
+                                            }).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ` : `
+                                <div style="text-align: center; padding: 15px; background: var(--light-bg); border-radius: 6px; color: var(--text-light);">
+                                    <i class="fas fa-user-friends" style="font-size: 22px; margin-bottom: 8px; display: block;"></i>
+                                    <p>لا توجد طالبات في هذه الحلقة بعد</p>
+                                </div>
+                            `}
+                        </div>
+                        
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn btn-primary" onclick="addStudentToTeacher(${teacher.id})">
+                                <i class="fas fa-user-plus"></i> إضافة طالبة
+                            </button>
+                            <button class="btn btn-secondary" onclick="editTeacher(${teacher.id})">
+                                <i class="fas fa-edit"></i> تعديل المعلومات
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteTeacher(${teacher.id})" style="margin-right: auto;">
+                                <i class="fas fa-trash"></i> حذف المعلمة
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(teacherCard);
+                });
+            }
+        }
+        
+        function loadAllStudentsPage() {
+            const stats = quranSystem.getStats();
+            document.getElementById('allStudentsCount').textContent = stats.totalStudents;
+            document.getElementById('inCirclesCount').textContent = stats.circleStudents;
+            document.getElementById('waitingAllCount').textContent = stats.waitingStudents;
+            
+            filterAllStudents();
+        }
+        
+        function filterAllStudents(query = '', level = '') {
+            let students = quranSystem.getAllStudents();
+            
+            if (query) {
+                students = students.filter(student => 
+                    student.name.includes(query) || 
+                    student.phone.includes(query) ||
+                    student.teacherName?.includes(query) ||
+                    student.circleName?.includes(query)
+                );
+            }
+            
+            if (level) {
+                students = students.filter(student => student.level == level);
+            }
+            
+            renderAllStudentsTable(students);
+        }
+        
+        function renderAllStudentsTable(students) {
+            const tableBody = document.getElementById('allStudentsTableBody');
+            tableBody.innerHTML = '';
+            
+            if (students.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 30px;">
+                            <i class="fas fa-users" style="font-size: 40px; margin-bottom: 15px; display: block; color: var(--text-light); opacity: 0.3;"></i>
+                            <h3 style="color: var(--text-light); margin-bottom: 8px;">لا توجد طالبات</h3>
+                            <p style="color: var(--text-light);">لم يتم العثور على طالبات تطابق معايير البحث</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                students.forEach((student, index) => {
+                    const isInCircle = student.teacherId;
+                    const remaining = student.remainingDays || { days: 0, percentage: 0 };
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td><strong>${student.name}</strong></td>
+                        <td>${student.phone}</td>
+                        <td>${quranSystem.getLevelBadge(student.level)}</td>
+                        <td>
+                            ${remaining.days > 0 ? `
+                                <div style="font-size: 11px;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>${remaining.days} يوم</span>
+                                        <span>${Math.round(remaining.percentage)}%</span>
+                                    </div>
+                                    <div class="duration-bar">
+                                        <div class="duration-progress" style="width: ${remaining.percentage}%"></div>
+                                    </div>
+                                </div>
+                            ` : '<span class="status completed">مكتمل</span>'}
+                        </td>
+                        <td>${student.circleName || 'غير موزعة'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view" onclick="viewStudent(${student.id})" title="عرض">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn edit" onclick="editStudent(${student.id})" title="تعديل">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                ${!isInCircle ? `
+                                <button class="action-btn move" onclick="openAssignModal(${student.id})" title="توزيع">
+                                    <i class="fas fa-user-plus"></i>
+                                </button>
+                                ` : ''}
+                                <button class="action-btn delete" onclick="deleteStudent(${student.id}, '${isInCircle ? 'circle' : 'waiting'}')" title="حذف">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+        }
+        
+        function loadReportsPage() {
+            const stats = quranSystem.getStats();
+            const teachers = quranSystem.getTeachers();
+            const allStudents = quranSystem.getAllStudents();
+            
+            const levelDistribution = {};
+            allStudents.forEach(student => {
+                levelDistribution[student.level] = (levelDistribution[student.level] || 0) + 1;
+            });
+            
+            const teacherDistribution = teachers.map(teacher => {
+                const students = quranSystem.getCircleStudents(teacher.id);
+                return {
+                    teacher: teacher.name,
+                    circle: teacher.circleName,
+                    students: students.length,
+                    capacity: teacher.capacity,
+                    percentage: Math.round((students.length / teacher.capacity) * 100)
+                };
+            });
+            
+            document.getElementById('reportsContent').innerHTML = `
+                <div class="dashboard-cards" style="margin-bottom: 25px;">
+                    <div class="stat-card students">
+                        <h3><i class="fas fa-users"></i> إجمالي الطالبات</h3>
+                        <div class="number">${stats.totalStudents}</div>
+                        <div class="subtext">طالبة في النظام</div>
+                    </div>
+                    <div class="stat-card teachers">
+                        <h3><i class="fas fa-chalkboard-teacher"></i> عدد المعلمات</h3>
+                        <div class="number">${stats.totalTeachers}</div>
+                        <div class="subtext">معلمة نشطة</div>
+                    </div>
+                    <div class="stat-card circles">
+                        <h3><i class="fas fa-circle"></i> الحلقات النشطة</h3>
+                        <div class="number">${stats.totalCircles}</div>
+                        <div class="subtext">حلقة تعليمية</div>
+                    </div>
+                    <div class="stat-card test">
+                        <h3><i class="fas fa-clipboard-check"></i> اختبارات قادمة</h3>
+                        <div class="number">${stats.upcomingTests}</div>
+                        <div class="subtext">اختبار خلال أسبوعين</div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3><i class="fas fa-chart-pie"></i> توزيع الطالبات حسب المستوى</h3>
+                        </div>
+                        <div style="padding: 15px;">
+                            ${Object.entries(levelDistribution).map(([level, count]) => {
+                                const percentage = stats.totalStudents > 0 ? ((count / stats.totalStudents) * 100).toFixed(1) : 0;
+                                const levelName = quranSystem.getLevelName(level);
+                                return `
+                                    <div style="margin-bottom: 12px;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 13px;">
+                                            <span>${levelName}</span>
+                                            <span><strong>${count}</strong> طالبة (${percentage}%)</span>
+                                        </div>
+                                        <div style="height: 10px; background-color: #e9ecef; border-radius: 5px; overflow: hidden;">
+                                            <div style="height: 100%; width: ${percentage}%; background-color: var(--primary-green); border-radius: 5px;"></div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3><i class="fas fa-chart-bar"></i> إحصائيات الحلقات</h3>
+                        </div>
+                        <div style="padding: 15px;">
+                            <table style="width: 100%; font-size: 13px;">
+                                <thead>
+                                    <tr>
+                                        <th>اسم الحلقة</th>
+                                        <th>المعلمة</th>
+                                        <th>الطالبات</th>
+                                        <th>النسبة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${teacherDistribution.map(item => `
+                                        <tr>
+                                            <td>${item.circle}</td>
+                                            <td>${item.teacher}</td>
+                                            <td>${item.students}/${item.capacity}</td>
+                                            <td>
+                                                <div style="display: flex; align-items: center; gap: 8px;">
+                                                    <span>${item.percentage}%</span>
+                                                    <div style="width: 50px; height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden;">
+                                                        <div style="width: ${item.percentage}%; height: 100%; background: ${item.percentage > 90 ? 'var(--danger)' : item.percentage > 70 ? 'var(--warning)' : 'var(--success)'};"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function updateMenuBadges(stats) {
+            document.getElementById('menuDashboardBadge').textContent = stats.totalStudents;
+            document.getElementById('menuWaitingBadge').textContent = stats.waitingStudents;
+            document.getElementById('menuTestsBadge').textContent = stats.upcomingTests;
+            document.getElementById('menuStudentsBadge').textContent = stats.totalStudents;
+            document.getElementById('menuTeachersBadge').textContent = stats.totalTeachers;
+        }
+        
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        function showWaitingPage() {
+            document.querySelectorAll('.menu-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector('[data-page="waiting"]').classList.add('active');
+            
+            document.querySelectorAll('.page').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById('waitingPage').style.display = 'block';
+            
+            loadWaitingPage();
+        }
+        
+        function showTestsPage() {
+            document.querySelectorAll('.menu-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector('[data-page="tests"]').classList.add('active');
+            
+            document.querySelectorAll('.page').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById('testsPage').style.display = 'block';
+            
+            loadTestsPage();
+        }
+        
+        function openAddStudentModal(studentId = null) {
+            const title = document.getElementById('studentModalTitle');
+            
+            if (studentId) {
+                title.textContent = 'تعديل بيانات الطالبة';
+                const student = quranSystem.getStudent(studentId);
+                
+                if (student) {
+                    document.getElementById('studentId').value = student.id;
+                    document.getElementById('studentName').value = student.name;
+                    document.getElementById('studentPhone').value = student.phone;
+                    document.getElementById('studentLevel').value = student.level;
+                    document.getElementById('studentAge').value = student.age || '';
+                    document.getElementById('studentStartDate').value = student.startDate || student.registrationDate;
+                    document.getElementById('studentNotes').value = student.notes || '';
+                    
+                    if (student.teacherId) {
+                        document.getElementById('studentType').value = 'circle';
+                        document.getElementById('circleSelectionGroup').style.display = 'block';
+                        loadCirclesForSelection();
+                        document.getElementById('studentCircle').value = student.teacherId;
+                    } else {
+                        document.getElementById('studentType').value = 'waiting';
+                        document.getElementById('circleSelectionGroup').style.display = 'none';
+                    }
+                }
+            } else {
+                title.textContent = 'إضافة طالبة جديدة';
+                document.getElementById('studentForm').reset();
+                document.getElementById('studentId').value = '';
+                document.getElementById('studentType').value = 'waiting';
+                document.getElementById('circleSelectionGroup').style.display = 'none';
+                
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('studentStartDate').value = today;
+            }
+            
+            openModal('studentModal');
+        }
+        
+        function loadCirclesForSelection() {
+            const circleSelect = document.getElementById('studentCircle');
+            circleSelect.innerHTML = '<option value="">اختر الحلقة</option>';
+            
+            const teachers = quranSystem.getActiveTeachers();
+            teachers.forEach(teacher => {
+                const studentsCount = quranSystem.getCircleStudents(teacher.id).length;
+                const available = teacher.capacity - studentsCount;
+                
+                const option = document.createElement('option');
+                option.value = teacher.id;
+                option.textContent = `${teacher.circleName} (${teacher.name}) - ${available} مقعد متبقي`;
+                option.disabled = available <= 0;
+                circleSelect.appendChild(option);
+            });
+        }
+        
+        function saveStudent() {
+            try {
+                const studentId = parseInt(document.getElementById('studentId').value);
+                const studentName = document.getElementById('studentName').value.trim();
+                const studentPhone = document.getElementById('studentPhone').value.trim();
+                const studentLevel = document.getElementById('studentLevel').value;
+                const studentAge = document.getElementById('studentAge').value;
+                const studentStartDate = document.getElementById('studentStartDate').value;
+                const studentType = document.getElementById('studentType').value;
+                const studentCircle = document.getElementById('studentCircle').value;
+                const studentNotes = document.getElementById('studentNotes').value.trim();
+                
+                let isValid = true;
+                
+                if (!studentName) {
+                    showError(document.getElementById('studentName').closest('.form-group'), 
+                            document.getElementById('studentNameError'), 'اسم الطالبة مطلوب');
+                    isValid = false;
+                } else {
+                    hideError(document.getElementById('studentName').closest('.form-group'), 
+                            document.getElementById('studentNameError'));
+                }
+                
+                if (!validatePhoneNumber(document.getElementById('studentPhone'))) {
+                    isValid = false;
+                }
+                
+                if (!studentLevel) {
+                    showError(document.getElementById('studentLevel').closest('.form-group'), 
+                            document.getElementById('studentLevelError'), 'المستوى التعليمي مطلوب');
+                    isValid = false;
+                } else {
+                    hideError(document.getElementById('studentLevel').closest('.form-group'), 
+                            document.getElementById('studentLevelError'));
+                }
+                
+                if (!studentStartDate) {
+                    showError(document.getElementById('studentStartDate').closest('.form-group'), 
+                            document.getElementById('studentStartDateError'), 'تاريخ بداية المستوى مطلوب');
+                    isValid = false;
+                } else {
+                    hideError(document.getElementById('studentStartDate').closest('.form-group'), 
+                            document.getElementById('studentStartDateError'));
+                }
+                
+                if (studentAge && !validateAge(document.getElementById('studentAge'))) {
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    return;
+                }
+                
+                const studentData = {
+                    name: studentName,
+                    phone: studentPhone,
+                    level: studentLevel,
+                    age: studentAge || null,
+                    startDate: studentStartDate,
+                    notes: studentNotes || null
+                };
+                
+                if (studentId) {
+                    const student = quranSystem.getStudent(studentId);
+                    const type = student.teacherId ? 'circle' : 'waiting';
+                    
+                    const updated = quranSystem.updateStudent(studentId, studentData, type);
+                    if (updated) {
+                        showAlert('تم تحديث بيانات الطالبة بنجاح!', 'success');
+                    }
+                } else {
+                    if (studentType === 'circle' && studentCircle) {
+                        const teacherId = parseInt(studentCircle);
+                        const teacher = quranSystem.getTeacher(teacherId);
+                        
+                        if (teacher) {
+                            const studentsCount = quranSystem.getCircleStudents(teacherId).length;
+                            if (studentsCount >= teacher.capacity) {
+                                showAlert('هذه الحلقة ممتلئة! يرجى اختيار حلقة أخرى.', 'error');
+                                return;
+                            }
+                            
+                            const circleStudentData = {
+                                ...studentData,
+                                teacherId: teacherId,
+                                teacherName: teacher.name,
+                                circleName: teacher.circleName
+                            };
+                            
+                            quranSystem.addCircleStudent(circleStudentData);
+                            showAlert('تم إضافة الطالبة إلى الحلقة بنجاح!', 'success');
+                        }
+                    } else {
+                        studentData.registrationDate = new Date().toISOString().split('T')[0];
+                        studentData.status = 'بانتظار التوزيع';
+                        quranSystem.addWaitingStudent(studentData);
+                        showAlert('تم إضافة الطالبة إلى قائمة الانتظار بنجاح!', 'success');
+                    }
+                }
+                
+                closeModal('studentModal');
+                updateAllViews();
+                
+            } catch (error) {
+                console.error('خطأ في حفظ بيانات الطالبة:', error);
+                showAlert('حدث خطأ أثناء حفظ البيانات. يرجى المحاولة مرة أخرى.', 'error');
+            }
+        }
+        
+        function editStudent(studentId) {
+            openAddStudentModal(studentId);
+        }
+        
+        function viewStudent(studentId) {
+            const student = quranSystem.getStudent(studentId);
+            
+            if (student) {
+                const levelName = quranSystem.getLevelName(student.level);
+                const remaining = quranSystem.getRemainingDays(student);
+                let info = `معلومات الطالبة:\n\n`;
+                info += `الاسم: ${student.name}\n`;
+                info += `رقم الهاتف: ${student.phone}\n`;
+                info += `المستوى: ${levelName}\n`;
+                info += `العمر: ${student.age || 'غير محدد'}\n`;
+                info += `تاريخ بداية المستوى: ${new Date(student.startDate || student.registrationDate).toLocaleDateString('ar-SA')}\n`;
+                info += `المدة المتبقية: ${remaining.days} يوم (${Math.round(remaining.percentage)}%)\n`;
+                info += `الحالة: ${student.status || (student.teacherId ? 'في حلقة' : 'بانتظار التوزيع')}\n`;
+                
+                if (student.teacherId) {
+                    info += `الحلقة: ${student.circleName}\n`;
+                    info += `المعلمة: ${student.teacherName}\n`;
+                    info += `تاريخ الانضمام: ${new Date(student.joinDate).toLocaleDateString('ar-SA')}\n`;
+                } else {
+                    info += `تاريخ التسجيل: ${new Date(student.registrationDate).toLocaleDateString('ar-SA')}\n`;
+                }
+                
+                if (student.notes) {
+                    info += `\nالملاحظات:\n${student.notes}`;
+                }
+                
+                const customDuration = quranSystem.getStudentDuration(studentId);
+                if (customDuration) {
+                    info += `\nالمدة المخصصة: ${customDuration} يوم`;
+                }
+                
+                alert(info);
+            }
+        }
+        
+        function deleteStudent(studentId, type) {
+            if (!confirm('هل أنت متأكد من حذف هذه الطالبة؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                return;
+            }
+            
+            if (type === 'waiting') {
+                const index = quranSystem.data.waitingStudents.findIndex(s => s.id === studentId);
+                if (index !== -1) {
+                    quranSystem.data.waitingStudents.splice(index, 1);
+                }
+            } else if (type === 'circle') {
+                const index = quranSystem.data.circleStudents.findIndex(s => s.id === studentId);
+                if (index !== -1) {
+                    quranSystem.data.circleStudents.splice(index, 1);
+                }
+            }
+            
+            quranSystem.saveData();
+            updateAllViews();
+            showAlert('تم حذف الطالبة بنجاح!', 'success');
+        }
+        
+        function openAddTeacherModal(teacherId = null) {
+            const title = document.getElementById('teacherModalTitle');
+            
+            if (teacherId) {
+                title.textContent = 'تعديل بيانات المعلمة';
+                const teacher = quranSystem.getTeacher(teacherId);
+                if (teacher) {
+                    document.getElementById('teacherId').value = teacher.id;
+                    document.getElementById('teacherName').value = teacher.name;
+                    document.getElementById('teacherPhone').value = teacher.phone;
+                    document.getElementById('teacherSpecialty').value = teacher.specialty;
+                    document.getElementById('teacherCircleName').value = teacher.circleName;
+                    document.getElementById('teacherExperience').value = teacher.experience || '';
+                    document.getElementById('teacherCapacity').value = teacher.capacity || 10;
+                    document.getElementById('teacherNotes').value = teacher.notes || '';
+                }
+            } else {
+                title.textContent = 'إضافة معلمة جديدة';
+                document.getElementById('teacherForm').reset();
+                document.getElementById('teacherId').value = '';
+                document.getElementById('teacherCapacity').value = 10;
+            }
+            
+            openModal('teacherModal');
+        }
+        
+        function saveTeacher() {
+            try {
+                const teacherId = parseInt(document.getElementById('teacherId').value);
+                const teacherName = document.getElementById('teacherName').value.trim();
+                const teacherPhone = document.getElementById('teacherPhone').value.trim();
+                const teacherSpecialty = document.getElementById('teacherSpecialty').value;
+                const teacherCircleName = document.getElementById('teacherCircleName').value.trim();
+                const teacherExperience = parseInt(document.getElementById('teacherExperience').value) || 0;
+                const teacherCapacity = parseInt(document.getElementById('teacherCapacity').value) || 10;
+                const teacherNotes = document.getElementById('teacherNotes').value.trim();
+                
+                let isValid = true;
+                
+                if (!teacherName) {
+                    showError(document.getElementById('teacherName').closest('.form-group'), 
+                            document.getElementById('teacherNameError'), 'اسم المعلمة مطلوب');
+                    isValid = false;
+                } else {
+                    hideError(document.getElementById('teacherName').closest('.form-group'), 
+                            document.getElementById('teacherNameError'));
+                }
+                
+                if (!validatePhoneNumber(document.getElementById('teacherPhone'))) {
+                    isValid = false;
+                }
+                
+                if (!teacherSpecialty) {
+                    showError(document.getElementById('teacherSpecialty').closest('.form-group'), 
+                            document.getElementById('teacherSpecialtyError'), 'التخصص مطلوب');
+                    isValid = false;
+                } else {
+                    hideError(document.getElementById('teacherSpecialty').closest('.form-group'), 
+                            document.getElementById('teacherSpecialtyError'));
+                }
+                
+                if (!teacherCircleName) {
+                    showError(document.getElementById('teacherCircleName').closest('.form-group'), 
+                            document.getElementById('teacherCircleNameError'), 'اسم الحلقة مطلوب');
+                    isValid = false;
+                } else {
+                    hideError(document.getElementById('teacherCircleName').closest('.form-group'), 
+                            document.getElementById('teacherCircleNameError'));
+                }
+                
+                if (!validateCapacity(document.getElementById('teacherCapacity'))) {
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    return;
+                }
+                
+                const teacherData = {
+                    name: teacherName,
+                    phone: teacherPhone,
+                    specialty: teacherSpecialty,
+                    circleName: teacherCircleName,
+                    experience: teacherExperience,
+                    capacity: teacherCapacity,
+                    notes: teacherNotes,
+                    status: 'نشطة'
+                };
+                
+                if (teacherId) {
+                    const updated = quranSystem.updateTeacher(teacherId, teacherData);
+                    if (updated) {
+                        showAlert('تم تحديث بيانات المعلمة بنجاح!', 'success');
+                    }
+                } else {
+                    quranSystem.addTeacher(teacherData);
+                    showAlert('تم إضافة المعلمة بنجاح!', 'success');
+                }
+                
+                closeModal('teacherModal');
+                updateAllViews();
+                
+            } catch (error) {
+                console.error('خطأ في حفظ بيانات المعلمة:', error);
+                showAlert('حدث خطأ أثناء حفظ البيانات. يرجى المحاولة مرة أخرى.', 'error');
+            }
+        }
+        
+        function editTeacher(teacherId) {
+            openAddTeacherModal(teacherId);
+        }
+        
+        function addStudentToTeacher(teacherId) {
+            const teacher = quranSystem.getTeacher(teacherId);
+            if (!teacher) return;
+            
+            const studentsCount = quranSystem.getCircleStudents(teacherId).length;
+            if (studentsCount >= teacher.capacity) {
+                showAlert('هذه الحلقة ممتلئة! لا يمكن إضافة المزيد من الطالبات.', 'error');
+                return;
+            }
+            
+            document.getElementById('studentModalTitle').textContent = `إضافة طالبة إلى ${teacher.circleName}`;
+            document.getElementById('studentForm').reset();
+            document.getElementById('studentId').value = '';
+            document.getElementById('studentType').value = 'circle';
+            document.getElementById('circleSelectionGroup').style.display = 'block';
+            
+            loadCirclesForSelection();
+            document.getElementById('studentCircle').value = teacherId;
+            
+            openModal('studentModal');
+        }
+        
+        function deleteTeacher(teacherId) {
+            const teacher = quranSystem.getTeacher(teacherId);
+            if (!teacher) return;
+            
+            const students = quranSystem.getCircleStudents(teacherId);
+            if (students.length > 0) {
+                showAlert(`لا يمكن حذف المعلمة لأنها تحتوي على ${students.length} طالبة. يرجى نقل الطالبات أولاً.`, 'error');
+                return;
+            }
+            
+            if (confirm(`هل أنت متأكد من حذف المعلمة ${teacher.name}؟ لا يمكن التراجع عن هذا الإجراء.`)) {
+                const index = quranSystem.data.teachers.findIndex(t => t.id === teacherId);
+                if (index !== -1) {
+                    quranSystem.data.teachers.splice(index, 1);
+                    quranSystem.saveData();
+                    
+                    updateAllViews();
+                    showAlert('تم حذف المعلمة بنجاح!', 'success');
+                }
+            }
+        }
+        
+        function openAddTestModal(testId = null) {
+            const title = document.getElementById('testModalTitle');
+            
+            if (testId) {
+                title.textContent = 'تعديل الاختبار';
+                const test = quranSystem.getTest(testId);
+                
+                if (test) {
+                    document.getElementById('testId').value = test.id;
+                    document.getElementById('testStudent').value = test.studentId;
+                    document.getElementById('testTeacher').value = test.teacherId;
+                    document.getElementById('testType').value = test.type;
+                    document.getElementById('testDate').value = test.date;
+                    document.getElementById('testMaterial').value = test.material || '';
+                    document.getElementById('testNotes').value = test.notes || '';
+                    
+                    loadStudentsForTest();
+                    loadTeachersForTest();
+                }
+            } else {
+                title.textContent = 'إضافة اختبار جديد';
+                document.getElementById('testForm').reset();
+                document.getElementById('testId').value = '';
+                
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('testDate').value = today;
+                
+                loadStudentsForTest();
+                loadTeachersForTest();
+            }
+            
+            openModal('testModal');
+        }
+        
+        function loadStudentsForTest() {
+            const studentSelect = document.getElementById('testStudent');
+            studentSelect.innerHTML = '<option value="">اختر الطالبة</option>';
+            
+            const circleStudents = quranSystem.getOnlyCircleStudents();
+            circleStudents.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.id;
+                option.textContent = `${student.name} - ${student.circleName}`;
+                studentSelect.appendChild(option);
+            });
+            
+            if (circleStudents.length === 0) {
+                const option = document.createElement('option');
+                option.disabled = true;
+                option.textContent = 'لا توجد طالبات في الحلقات';
+                studentSelect.appendChild(option);
+            }
+        }
+        
+        function loadTeachersForTest() {
+            const teacherSelect = document.getElementById('testTeacher');
+            teacherSelect.innerHTML = '<option value="">اختر المعلمة</option>';
+            
+            const teachers = quranSystem.getActiveTeachers();
+            teachers.forEach(teacher => {
+                const option = document.createElement('option');
+                option.value = teacher.id;
+                option.textContent = `${teacher.name} - ${teacher.circleName}`;
+                teacherSelect.appendChild(option);
+            });
+        }
+        
+        function saveTest() {
+            try {
+                const testId = parseInt(document.getElementById('testId').value);
+                const testStudent = parseInt(document.getElementById('testStudent').value);
+                const testTeacher = parseInt(document.getElementById('testTeacher').value);
+                const testType = document.getElementById('testType').value;
+                const testDate = document.getElementById('testDate').value;
+                const testMaterial = document.getElementById('testMaterial').value;
+                const testNotes = document.getElementById('testNotes').value;
+                
+                let isValid = true;
+                
+                if (!testStudent || isNaN(testStudent)) {
+                    showError(document.getElementById('testStudent').closest('.form-group'), 
+                            document.getElementById('testStudentError'), 'الطالبة مطلوبة');
+                    isValid = false;
+                } else {
+                    hideError(document.getElementById('testStudent').closest('.form-group'), 
+                            document.getElementById('testStudentError'));
+                }
+                
+                if (!testTeacher || isNaN(testTeacher)) {
+                    showError(document.getElementById('testTeacher').closest('.form-group'), 
+                            document.getElementById('testTeacherError'), 'المعلمة مطلوبة');
+                    isValid = false;
+                } else {
+                    hideError(document.getElementById('testTeacher').closest('.form-group'), 
+                            document.getElementById('testTeacherError'));
+                }
+                
+                if (!testType) {
+                    showError(document.getElementById('testType').closest('.form-group'), 
+                            document.getElementById('testTypeError'), 'نوع الاختبار مطلوب');
+                    isValid = false;
+                } else {
+                    hideError(document.getElementById('testType').closest('.form-group'), 
+                            document.getElementById('testTypeError'));
+                }
+                
+                if (!testDate) {
+                    showError(document.getElementById('testDate').closest('.form-group'), 
+                            document.getElementById('testDateError'), 'تاريخ الاختبار مطلوب');
+                    isValid = false;
+                } else {
+                    hideError(document.getElementById('testDate').closest('.form-group'), 
+                            document.getElementById('testDateError'));
+                }
+                
+                if (!isValid) {
+                    return;
+                }
+                
+                const testData = {
+                    studentId: testStudent,
+                    teacherId: testTeacher,
+                    type: testType,
+                    date: testDate,
+                    score: null,
+                    material: testMaterial,
+                    notes: testNotes,
+                    status: 'قادم'
+                };
+                
+                if (testId) {
+                    const updated = quranSystem.updateTest(testId, testData);
+                    if (updated) {
+                        showAlert('تم تحديث الاختبار بنجاح!', 'success');
+                    } else {
+                        throw new Error('فشل تحديث الاختبار');
+                    }
+                } else {
+                    const newTest = quranSystem.addTest(testData);
+                    if (newTest) {
+                        showAlert('تم إضافة الاختبار بنجاح!', 'success');
+                    } else {
+                        throw new Error('فشل إضافة الاختبار');
+                    }
+                }
+                
+                closeModal('testModal');
+                updateAllViews();
+                
+            } catch (error) {
+                console.error('خطأ في حفظ بيانات الاختبار:', error);
+                showAlert(`حدث خطأ أثناء حفظ البيانات: ${error.message}`, 'error');
+            }
+        }
+        
+        function editTest(testId) {
+            openAddTestModal(testId);
+        }
+        
+        function completeTest(testId) {
+            const score = prompt('أدخل درجة الاختبار (من 100):');
+            if (score === null) return;
+            
+            if (score && (parseInt(score) < 0 || parseInt(score) > 100)) {
+                showAlert('يجب أن تكون الدرجة بين 0 و 100', 'error');
+                return;
+            }
+            
+            const result = prompt('أدخل نتيجة الاختبار (مثال: ممتاز، جيد جداً، جيد، مقبول):');
+            if (result === null) return;
+            
+            const notes = prompt('أدخل ملاحظات إضافية عن الاختبار (اختياري):');
+            
+            const updates = {
+                status: 'مكتمل',
+                score: score ? parseInt(score) : null,
+                result: result,
+                notes: notes ? (quranSystem.getTest(testId).notes || '') + '\n' + notes : quranSystem.getTest(testId).notes
+            };
+            
+            const updated = quranSystem.updateTest(testId, updates);
+            if (updated) {
+                showAlert('تم إكمال الاختبار بنجاح!', 'success');
+                updateAllViews();
+            }
+        }
+        
+        function deleteTest(testId) {
+            if (!confirm('هل أنت متأكد من حذف هذا الاختبار؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                return;
+            }
+            
+            const deleted = quranSystem.deleteTest(testId);
+            if (deleted) {
+                showAlert('تم حذف الاختبار بنجاح!', 'success');
+                updateAllViews();
+            }
+        }
+        
+        function openAssignModal(studentId) {
+            studentId = parseInt(studentId);
+            currentAssignStudentId = studentId;
+            
+            const student = quranSystem.getStudent(studentId);
+            
+            if (!student) {
+                showAlert('الطالبة غير موجودة', 'error');
+                return;
+            }
+            
+            if (student.teacherId) {
+                showAlert('هذه الطالبة موزعة مسبقًا على حلقة ' + student.circleName, 'error');
+                return;
+            }
+            
+            const remaining = quranSystem.getRemainingDays(student);
+            
+            document.getElementById('assignStudentName').textContent = student.name;
+            document.getElementById('assignStudentDetails').innerHTML = `
+                <strong>المستوى:</strong> ${quranSystem.getLevelName(student.level)}<br>
+                <strong>رقم التواصل:</strong> ${student.phone}<br>
+                <strong>المدة المتبقية:</strong> ${remaining.days} يوم (${Math.round(remaining.percentage)}%)<br>
+                ${student.age ? `<strong>العمر:</strong> ${student.age}<br>` : ''}
+                ${student.notes ? `<strong>ملاحظات:</strong> ${student.notes}<br>` : ''}
+                <strong>تاريخ التسجيل:</strong> ${new Date(student.registrationDate).toLocaleDateString('ar-SA')}<br>
+            `;
+            
+            const teacherSelect = document.getElementById('selectTeacher');
+            teacherSelect.innerHTML = '<option value="">اختر المعلمة</option>';
+            
+            const teachers = quranSystem.getActiveTeachers();
+            
+            if (teachers.length === 0) {
+                const option = document.createElement('option');
+                option.disabled = true;
+                option.textContent = 'لا توجد معلمات متاحة';
+                teacherSelect.appendChild(option);
+                showAlert('لا توجد معلمات متاحة حالياً للتوزيع', 'warning');
+            } else {
+                teachers.forEach(teacher => {
+                    const studentsCount = quranSystem.getCircleStudents(teacher.id).length;
+                    const available = teacher.capacity - studentsCount;
+                    
+                    const option = document.createElement('option');
+                    option.value = teacher.id;
+                    option.textContent = `${teacher.circleName} (${teacher.name}) - ${available} مقعد متبقي`;
+                    
+                    option.disabled = available <= 0;
+                    
+                    if (available <= 0) {
+                        option.style.color = '#dc3545';
+                        option.textContent += ' (ممتلئة)';
+                    } else if (available <= 2) {
+                        option.style.color = '#ffc107';
+                        option.textContent += ' (آخر مقاعد)';
+                    } else {
+                        option.style.color = '#28a745';
+                    }
+                    
+                    teacherSelect.appendChild(option);
+                });
+            }
+            
+            teacherSelect.onchange = function() {
+                const teacherId = parseInt(this.value);
+                const teacherDetails = document.getElementById('teacherDetails');
+                const confirmBtn = document.getElementById('confirmAssignBtn');
+                
+                if (teacherId) {
+                    const teacher = quranSystem.getTeacher(teacherId);
+                    const students = quranSystem.getCircleStudents(teacherId);
+                    const available = teacher.capacity - students.length;
+                    
+                    teacherDetails.style.display = 'block';
+                    document.getElementById('teacherInfo').innerHTML = `
+                        <strong>المعلمة:</strong> ${teacher.name}<br>
+                        <strong>التخصص:</strong> ${teacher.specialty}<br>
+                        <strong>الخبرة:</strong> ${teacher.experience || 0} سنوات<br>
+                        <strong>الحلقة:</strong> ${teacher.circleName}
+                    `;
+                    document.getElementById('currentStudents').innerHTML = `
+                        <strong>الطالبات الحاليات:</strong> ${students.length} / ${teacher.capacity}<br>
+                        <strong>المقاعد المتاحة:</strong> <span style="color: ${available <= 0 ? '#dc3545' : available <= 2 ? '#ffc107' : '#28a745'}">${available}</span>
+                    `;
+                    
+                    if (available <= 0) {
+                        confirmBtn.disabled = true;
+                        confirmBtn.innerHTML = '<i class="fas fa-ban"></i> الحلقة ممتلئة';
+                        confirmBtn.style.backgroundColor = '#6c757d';
+                    } else {
+                        confirmBtn.disabled = false;
+                        confirmBtn.innerHTML = '<i class="fas fa-check"></i> تأكيد التوزيع';
+                        confirmBtn.style.backgroundColor = '';
+                    }
+                } else {
+                    teacherDetails.style.display = 'none';
+                    confirmBtn.disabled = true;
+                    confirmBtn.innerHTML = '<i class="fas fa-check"></i> تأكيد التوزيع';
+                    confirmBtn.style.backgroundColor = '';
+                }
+            };
+            
+            openModal('assignModal');
+            
+            const confirmBtn = document.getElementById('confirmAssignBtn');
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="fas fa-check"></i> تأكيد التوزيع';
+            confirmBtn.style.backgroundColor = '';
+        }
+        
+        function confirmAssignment() {
+            const teacherSelect = document.getElementById('selectTeacher');
+            const teacherId = parseInt(teacherSelect.value);
+            
+            if (!teacherId || !currentAssignStudentId) {
+                showAlert('يرجى اختيار معلمة أولاً', 'error');
+                return;
+            }
+            
+            const selectedOption = teacherSelect.options[teacherSelect.selectedIndex];
+            if (selectedOption.disabled) {
+                showAlert('لا يمكن اختيار هذه الحلقة لأنها ممتلئة', 'error');
+                return;
+            }
+            
+            const result = quranSystem.moveStudentToCircle(currentAssignStudentId, teacherId);
+            
+            if (result) {
+                showAlert(`✅ تم توزيع الطالبة "${result.name}" بنجاح على حلقة "${result.circleName}"`, 'success');
+                closeModal('assignModal');
+                
+                setTimeout(() => {
+                    updateAllViews();
+                    
+                    if (document.getElementById('waitingPage').style.display === 'block') {
+                        loadWaitingPage();
+                    }
+                }, 500);
+                
+            } else {
+                showAlert('❌ حدث خطأ أثناء توزيع الطالبة. يرجى المحاولة مرة أخرى.', 'error');
+            }
+        }
+        
+        function updateAllViews() {
+            const stats = quranSystem.getStats();
+            updateMenuBadges(stats);
+            
+            const activeMenuItem = document.querySelector('.menu-item.active');
+            if (activeMenuItem) {
+                const pageId = activeMenuItem.getAttribute('data-page');
+                
+                switch(pageId) {
+                    case 'dashboard':
+                        loadDashboard();
+                        break;
+                    case 'waiting':
+                        const waitingStudents = quranSystem.getOnlyWaitingStudents();
+                        renderWaitingStudentsTable(waitingStudents);
+                        
+                        document.getElementById('waitingCount').textContent = stats.waitingStudents;
+                        document.getElementById('totalStudentsCount').textContent = stats.totalStudents;
+                        document.getElementById('activeCirclesCount').textContent = stats.totalCircles;
+                        break;
+                    case 'tests':
+                        loadTestsPage();
+                        break;
+                    case 'teachers':
+                        loadTeachersPage();
+                        break;
+                    case 'allStudents':
+                        loadAllStudentsPage();
+                        break;
+                    case 'reports':
+                        loadReportsPage();
+                        break;
+                }
+            }
+        }
+        
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i>
+                ${message}
+            `;
+            
+            const header = document.querySelector('.header');
+            if (header) {
+                header.parentNode.insertBefore(alertDiv, header.nextSibling);
+                
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 5000);
+            } else {
+                alert(message);
+            }
+        }
+        
+        window.addEventListener('click', function(event) {
+            const modals = ['studentModal', 'teacherModal', 'testModal', 'assignModal'];
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (event.target === modal) {
+                    closeModal(modalId);
+                }
+            });
+        });
+        
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modals = ['studentModal', 'teacherModal', 'testModal', 'assignModal'];
+                modals.forEach(modalId => {
+                    const modal = document.getElementById(modalId);
+                    if (modal.style.display === 'flex') {
+                        closeModal(modalId);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
